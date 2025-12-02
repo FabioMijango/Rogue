@@ -1,6 +1,11 @@
 #include "Game.hpp"
 
+#include <iostream>
+
 Game::Game() {
+    window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "Rogue");
+    window.setFramerateLimit(60);
+
     delta = clock.restart().asSeconds();
 }
 
@@ -9,13 +14,13 @@ void Game::update() {
 }
 
 void Game::draw() {
-    return;
+    window.clear();
+    draw();
+    window.display();
 }
 
 
 void Game::run() {
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "Rogue");
-    window.setFramerateLimit(60);
 
     while (window.isOpen())
     {
@@ -30,11 +35,11 @@ void Game::run() {
                     window.close();
             }
         }
+
         delta = clock.restart().asSeconds();
 
         update();
-        window.clear();
+
         draw();
-        window.display();
     }
 }

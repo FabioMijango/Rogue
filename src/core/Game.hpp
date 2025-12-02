@@ -6,6 +6,7 @@ public:
     Game();
     void run();
 private:
+    sf::RenderWindow window;
     sf::Clock clock;
     double delta;
 private:
