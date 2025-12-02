@@ -1,7 +1,5 @@
 #include "Game.hpp"
 
-#include <iostream>
-
 Game::Game() {
     window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "Rogue");
     window.setFramerateLimit(60);
@@ -15,7 +13,7 @@ void Game::update() {
 
 void Game::draw() {
     window.clear();
-    draw();
+
     window.display();
 }
 
