@@ -17,7 +17,6 @@ add_executable(main src/main.cpp
         src/core/Game.hpp
         src/core/ResourceManager.cpp
         src/core/ResourceManager.hpp
-        src/bible/Bible.hpp)
         src/bible/Bible.hpp
         src/core/Random.hpp
 )
