@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <climits>
 
 #include "Dungeon.hpp"
 #include "Random.hpp"
