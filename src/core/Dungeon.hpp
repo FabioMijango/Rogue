@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <vector>
 
 #include "SFML/Graphics/Rect.hpp"
@@ -19,8 +20,13 @@ namespace dg {
 
     class Dungeon {
     public:
-        std::vector<Room> rooms;
     public:
         Dungeon();
+        Dungeon(std::vector<Room> rooms, std::vector<Edge> edges);
+
+        void print();
+    private:
+        std::vector<Room> rooms;
+        std::vector<Edge> edges;
     };
 }
