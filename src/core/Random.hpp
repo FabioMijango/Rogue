@@ -37,4 +37,8 @@ namespace rnd {
         u.i = (Get64() >> 12) | 0x3FF0000000000000;
         return u.d - 1.0;
     }
+
+    inline int GetInt() {
+        return static_cast<int>(Get64());
+    }
 }
