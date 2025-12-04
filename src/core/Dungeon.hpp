@@ -5,6 +5,10 @@
 #include "SFML/System/Vector2.hpp"
 
 namespace dg {
+    struct Edge {
+        int a, b;
+    };
+
     struct Room {
         sf::Vector2<int> position;
         sf::Vector2<unsigned int> size;
