@@ -23,6 +23,8 @@ add_executable(main src/main.cpp
         src/core/Dungeon.hpp
         src/core/DungeonGenerator.cpp
         src/core/DungeonGenerator.hpp
+        src/core/Atlas.cpp
+        src/core/Atlas.hpp
 )
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)
