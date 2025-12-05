@@ -1,15 +1,18 @@
 #include "ResourceManager.hpp"
 
+#include "Atlas.hpp"
+
 ResourceManager::ResourceManager() {
     loadTextures();
 }
 
 void ResourceManager::loadTextures() {
-    for (const auto& res : bb::resources) {
-        atlasTextures[res.name] = std::make_shared<sf::Texture>(res.path);
+    for (const auto& entry : bb::resources) {
+        const auto atlas = std::make_shared<Atlas>(entry.imagePath, entry.metaPath);
+        atlasTextures[entry.name] = atlas;
     }
 }
 
-std::weak_ptr<sf::Texture> ResourceManager::getTexture(const std::string &textureName) {
-    return atlasTextures[textureName];
+std::weak_ptr<Atlas> ResourceManager::getAtlas(const std::string &atlasName) {
+    return atlasTextures[atlasName];
 }
