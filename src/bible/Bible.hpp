@@ -1,16 +1,16 @@
 #pragma once
 
-#include <filesystem>
 #include <string>
 
 namespace bb {
     struct Resource {
         std::string name;
-        std::filesystem::path path;
+        std::string imagePath;
+        std::string metaPath;
     };
 
     inline const Resource resources[] = {
-        {"TILES", "./res/tiles.png"},
+        {"tiles", "./res/tiles.png", "./res/tiles.txt"},
     };
 
 }
