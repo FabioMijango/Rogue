@@ -6,20 +6,22 @@
 
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Texture.hpp"
+#include "../util/Constants.hpp"
 
 struct Tile {
-    int row;
-    int col;
+    uint16_t row;
+    uint16_t col;
+    std::string name;
 };
 
 class Atlas {
 public:
     Atlas(const std::string& imagePath, const std::string& metaPath);
-    sf::Sprite getSprite(const std::string& tileName) const;
+    sf::Sprite getSprite(uint16_t id) const;
 
 private:
     std::shared_ptr<sf::Texture> atlasTexture;
-    std::unordered_map<std::string, Tile> tiles;
+    std::unordered_map<uint16_t, Tile> tiles;
 private:
     static sf::IntRect getTileRect(int row, int col);
     void parseMeta(const std::string& metaPath);

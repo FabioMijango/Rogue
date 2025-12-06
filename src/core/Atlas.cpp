@@ -1,7 +1,5 @@
 #include "Atlas.hpp"
 
-#include <iostream>
-
 Atlas::Atlas(const std::string &imagePath, const std::string &metaPath) {
     sf::Texture tempAtlas;
     if (!tempAtlas.loadFromFile(imagePath))
@@ -13,14 +11,14 @@ Atlas::Atlas(const std::string &imagePath, const std::string &metaPath) {
 
 sf::IntRect Atlas::getTileRect(int row, int col) {
     return sf::IntRect(
-        {row, col},
-        {32, 32});
+        { col * consts::TILE_SIZE, row * consts::TILE_SIZE},
+        {consts::TILE_SIZE, consts::TILE_SIZE}
+    );
 }
 
-sf::Sprite Atlas::getSprite(const std::string &tileName) const {
-    auto [row, col] = tiles.at(tileName);
-
-    sf::Sprite sprite(*atlasTexture, getTileRect(row, col));
+sf::Sprite Atlas::getSprite(uint16_t id) const {
+    const auto& tile = tiles.at(id);
+    sf::Sprite sprite(*atlasTexture, getTileRect(tile.row, tile.col));
     return sprite;
 }
 
@@ -33,20 +31,17 @@ void Atlas::parseMeta(const std::string &metaPath) {
     std::regex linePattern(R"((\d+)\.([a-z])\. (.*))");
     std::string line;
 
+    uint16_t tileId = 0;
     while (std::getline(file, line)) {
-        if (line.empty()) {
-            std::cout << "Empty line" << std::endl;
-            continue;
-        }
+        if (line.empty()) continue;
 
         if (std::smatch match; std::regex_match(line, match, linePattern)) {
-            const int row = std::stoi(match[1]);
-            const int colC = match[2].str()[0];
-            const int col = colC - 'a';
-            std::cout << row << " " << col << " " << match[3] << std::endl;
-            std::string name = match[3];
-
-            tiles[name] = Tile{(row - 1) * 32, col * 32};
+            const uint16_t row = std::stoi(match[1]) - 1;
+            const uint16_t colC = match[2].str()[0];
+            const uint16_t col = colC - 'a';
+            const std::string name = match[3];
+            tiles[tileId++] = Tile{ row, col, name };
         }
     }
+    file.close();
 }
