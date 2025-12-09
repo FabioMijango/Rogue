@@ -26,6 +26,8 @@ add_executable(main src/main.cpp
         src/core/Atlas.cpp
         src/core/Atlas.hpp
         src/util/Constants.hpp
+        src/bible/Theme.hpp
+        src/bible/Theme.cpp
 )
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)
