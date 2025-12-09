@@ -1,13 +1,11 @@
 1.a. dirt wall (top)
 1.b. dirt wall (side)
-1.c. inner wall
 
 2.a. rough stone wall (top)
 2.b. rough stone wall (side)
 
 3.a. stone brick wall (top)
 3.b. stone brick wall (side 1)
-3.c. stone brick wall (side 2)
 
 4.a. igneous wall (top)
 4.b. igneous wall (side)
