@@ -29,7 +29,7 @@ void DungeonThemeBuilder::generateTheme() {
     }
     floorSet = {
         bb::floorTiles[floorNumber],
-        decorationsSet
+        std::vector<uint16_t>(decorationsSet.begin(), decorationsSet.end())
     };
 }
 

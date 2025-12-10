@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <set>
+#include <vector>
 
 #include "../bible/Bible.hpp"
 #include "../core/Random.hpp"
@@ -11,7 +12,7 @@ struct WallSet {
 };
 struct FloorSet {
     uint16_t baseId;
-    std::set<uint16_t> decorations;
+    std::vector<uint16_t> decorations;
 };
 
 struct DungeonTheme {
