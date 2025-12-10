@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #include "SFML/Graphics/Rect.hpp"
@@ -13,6 +14,7 @@ namespace dg {
     struct Room {
         sf::Vector2<int> position;
         sf::Vector2<unsigned int> size;
+        std::vector<std::vector<uint16_t>> tileMap;
         Room();
         Room(sf::Vector2<int> position, sf::Vector2<unsigned int> size);
         [[nodiscard]] sf::FloatRect getBounds() const;
