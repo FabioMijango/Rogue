@@ -5,12 +5,16 @@ dg::Dungeon dg::DungeonGenerator::generateDungeon() {
     createRooms();
     fixRooms();
     connectRooms();
+    setTileMaps();
     return createDungeonFromData();
 }
 
 void dg::DungeonGenerator::prepare() {
     rooms.clear();
     roomCount = rnd::GetInt() % 3 + 10;
+
+    DungeonThemeBuilder themeBuilder;
+    theme = themeBuilder.generateDungeonTheme();
 }
 
 void dg::DungeonGenerator::createRooms() {
@@ -75,6 +79,23 @@ void dg::DungeonGenerator::connectRooms() {
         edges.push_back({bestA, bestB});
         connected[bestB] = true;
         connectedCount++;
+    }
+}
+
+void dg::DungeonGenerator::setTileMaps() {
+    for (auto& room :rooms) {
+        // Init vector size X, with vector size Y inside, filled with floor baseId
+        std::vector<std::vector<uint16_t>> tileMap(room.size.x, std::vector<uint16_t>(room.size.y, theme.floor.baseId));
+        for (size_t x = 0; x < room.size.x; x++) {
+            for (size_t y = 0; y < room.size.y; y++) {
+                if (x == 0 || x == room.size.x ) {
+                    tileMap[x][y] = theme.wall.topId;
+                } else if (y == 0 || y == room.size.y ) {
+                    tileMap[x][y] = theme.wall.sideId;
+                }
+            }
+        }
+        room.tileMap = tileMap;
     }
 }
 
