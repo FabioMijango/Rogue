@@ -1,8 +1,5 @@
 #include "DungeonGenerator.hpp"
 
-dg::DungeonGenerator::DungeonGenerator() {
-}
-
 dg::Dungeon dg::DungeonGenerator::generateDungeon() {
     prepare();
     createRooms();

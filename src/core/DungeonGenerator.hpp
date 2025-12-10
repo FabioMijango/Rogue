@@ -1,6 +1,6 @@
 #pragma once
-#include <vector>
 #include <climits>
+#include <vector>
 
 #include "Dungeon.hpp"
 #include "Random.hpp"
@@ -8,7 +8,7 @@
 namespace dg {
     class DungeonGenerator {
     public:
-        DungeonGenerator();
+        DungeonGenerator() = default;
         Dungeon generateDungeon();
     private:
         short roomCount = 0;
