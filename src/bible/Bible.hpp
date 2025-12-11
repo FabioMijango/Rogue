@@ -5,12 +5,16 @@
 namespace bb {
     struct Resource {
         std::string name;
-        std::string imagePath;
+        std::string path;
         std::string metaPath;
     };
 
-    inline const Resource resources[] = {
+    inline const Resource imageResources[] = {
         {"tiles", "./res/images/tiles.png", "./res/images/tiles.txt"},
+    };
+
+    inline const Resource fontResources[] = {
+        {"jersey15-regular", "./res/fonts/Jersey15-Regular.ttf", ""},
     };
 
     inline const uint16_t wallTopTiles[] = { 0, 2, 4, 6, 8, 10};
