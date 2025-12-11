@@ -12,11 +12,11 @@ namespace dg {
     };
 
     struct Room {
-        sf::Vector2<int> position;
-        sf::Vector2<unsigned int> size;
+        sf::Vector2f position;
+        sf::Vector2u size;
         std::vector<std::vector<uint16_t>> tileMap;
         Room();
-        Room(sf::Vector2<int> position, sf::Vector2<unsigned int> size);
+        Room(sf::Vector2f position, sf::Vector2u size);
         [[nodiscard]] sf::FloatRect getBounds() const;
     };
 

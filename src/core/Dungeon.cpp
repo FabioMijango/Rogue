@@ -5,7 +5,7 @@ dg::Room::Room() {
     size = {0, 0};
 }
 
-dg::Room::Room(const sf::Vector2<int> position, const sf::Vector2<unsigned int> size) {
+dg::Room::Room(const sf::Vector2f position, const sf::Vector2u size) {
     this->position = position;
     this->size = size;
 }

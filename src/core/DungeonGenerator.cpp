@@ -23,8 +23,8 @@ void dg::DungeonGenerator::createRooms() {
 
     for (size_t i = 0; i <= roomCount; i++) {
         Room newRoom(
-            sf::Vector2<int>(rnd::GetInt() % 50, rnd::GetInt() % 50),
-            sf::Vector2<unsigned int>(rnd::Get64() % 15 + 10, rnd::Get64() % 15 + 10)
+            sf::Vector2f(rnd::GetInt() % 50, rnd::GetInt() % 50),
+            sf::Vector2u(rnd::Get64() % 15 + 10, rnd::Get64() % 15 + 10)
             );
         rooms.push_back(newRoom);
     }
