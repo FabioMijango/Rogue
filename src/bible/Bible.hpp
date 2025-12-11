@@ -10,7 +10,7 @@ namespace bb {
     };
 
     inline const Resource resources[] = {
-        {"tiles", "./res/tiles.png", "./res/tiles.txt"},
+        {"tiles", "./res/images/tiles.png", "./res/images/tiles.txt"},
     };
 
     inline const uint16_t wallTopTiles[] = { 0, 2, 4, 6, 8, 10};
