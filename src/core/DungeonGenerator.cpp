@@ -88,11 +88,15 @@ void dg::DungeonGenerator::setTileMaps() {
         std::vector<std::vector<uint16_t>> tileMap(room.size.x, std::vector<uint16_t>(room.size.y, theme.floor.baseId));
         for (size_t x = 0; x < room.size.x; x++) {
             for (size_t y = 0; y < room.size.y; y++) {
-                if (x == 0 || x == room.size.x ) {
+                if (x == 0 || x == room.size.x - 1)
                     tileMap[x][y] = theme.wall.topId;
-                } else if (y == 0 || y == room.size.y ) {
+                else if (y == 0 || y == room.size.y - 1)
                     tileMap[x][y] = theme.wall.sideId;
-                }
+
+                if ( x == 0 && y == room.size.y - 1)
+                    tileMap[x][y] = theme.wall.sideId;
+                else if ( x == room.size.x - 1 && y == room.size.y - 1)
+                    tileMap[x][y] = theme.wall.sideId;
             }
         }
         room.tileMap = tileMap;
