@@ -1,6 +1,15 @@
 #include "StartScreen.hpp"
 
 void StartScreen::update(double dt) {
+    if (clock.getElapsedTime() > sf::seconds(1.f)) {
+        colorChanged = !colorChanged;
+        clock.restart();
+        for (auto &drawable: drawables) {
+            if (auto *text = dynamic_cast<sf::Text*>(drawable.get())) {
+                text->setFillColor(colorChanged ? sf::Color(128, 128, 128) : sf::Color::White);
+            }
+        }
+    }
 }
 
 void StartScreen::render() {
@@ -20,6 +29,7 @@ void StartScreen::handleInput() {
 
 void StartScreen::onEnter(ResourceManager &resourceManager, sf::RenderWindow &window_) {
     window = &window_;
+    clock.restart();
     const std::weak_ptr<sf::Font> font = resourceManager.getFont(bb::fontResources[0].name);
 
     sf::Text titleText(*font.lock(), "ROGUE", 48);

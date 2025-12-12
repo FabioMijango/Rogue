@@ -11,4 +11,8 @@ public:
     void handleInput() override;
     void onEnter(ResourceManager &resourceManager, sf::RenderWindow &window_) override;
     void onExit() override;
+
+private:
+    sf::Clock clock;
+    bool colorChanged = false;
 };
