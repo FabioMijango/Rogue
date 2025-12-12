@@ -2,8 +2,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "ResourceManager.hpp"
-#include "../game/screenManager/ScreenManager.hpp"
-#include "../game/screenManager/StartScreen.hpp"
+#include "../game/screens/ScreenManager.hpp"
+#include "../game/screens/StartScreen.hpp"
 
 class Game {
 public:

@@ -28,11 +28,11 @@ add_executable(main src/main.cpp
         src/util/Constants.hpp
         src/bible/Theme.hpp
         src/bible/Theme.cpp
-        src/game/ScreenManager/ScreenManager.cpp
-        src/game/ScreenManager/ScreenManager.hpp
-        src/game/screenManager/Screen.hpp
-        src/game/screenManager/StartScreen.cpp
-        src/game/screenManager/StartScreen.hpp
+        src/game/screens/ScreenManager.cpp
+        src/game/screens/ScreenManager.hpp
+        src/game/screens/Screen.hpp
+        src/game/screens/StartScreen.cpp
+        src/game/screens/StartScreen.hpp
 )
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)
