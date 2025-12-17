@@ -1,4 +1,5 @@
 #pragma once
+#include "GameScreen.hpp"
 #include "Screen.hpp"
 #include "StartScreen.hpp"
 #include "../GameContext.hpp"

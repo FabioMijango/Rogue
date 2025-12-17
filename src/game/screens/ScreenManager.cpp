@@ -1,7 +1,5 @@
 #include "ScreenManager.hpp"
 
-#include "GameScreen.hpp"
-
 void ScreenManager::init(const GameContext ctx) {
     context = ctx;
     currentScreen = nullptr;
