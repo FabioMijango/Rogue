@@ -1,13 +1,12 @@
 #include "ScreenManager.hpp"
 
-void ScreenManager::init(const Context ctx) {
+void ScreenManager::init(const GameContext ctx) {
     context = ctx;
     currentScreen = nullptr;
     previousScreen = nullptr;
 
     StartScreen startScreen;
-    startScreen.onEnter(*ctx.resourceManager, *ctx.window);
-
+    startScreen.onEnter(context);
     changeScreen(std::make_unique<StartScreen>(startScreen));
 }
 
@@ -26,4 +25,9 @@ void ScreenManager::render() const {
 void ScreenManager::changeScreen(std::unique_ptr<Screen> newScreen) {
     previousScreen = std::move(currentScreen);
     currentScreen = std::move(newScreen);
+
+    currentScreen->onEnter(context);
+    if (previousScreen) {
+        previousScreen->onExit();
+    }
 }

@@ -33,6 +33,7 @@ add_executable(main src/main.cpp
         src/game/screens/Screen.hpp
         src/game/screens/StartScreen.cpp
         src/game/screens/StartScreen.hpp
+        src/game/GameContext.hpp
 )
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)

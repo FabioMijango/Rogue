@@ -1,6 +1,8 @@
 #pragma once
+#include <SFML/Graphics/RenderWindow.hpp>
+
+#include "../GameContext.hpp"
 #include "../../core/ResourceManager.hpp"
-#include "SFML/Graphics/RenderWindow.hpp"
 
 class Screen {
 public:
@@ -8,7 +10,7 @@ public:
     virtual void handleInput(const std::optional<sf::Event> &event) = 0;
     virtual void update(double dt) = 0;
     virtual void render() = 0;
-    virtual void onEnter(ResourceManager& resourceManager, sf::RenderWindow &window_) = 0;
+    virtual void onEnter(GameContext context) = 0;
     virtual void onExit() = 0;
 
 protected:

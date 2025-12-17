@@ -28,10 +28,10 @@ void StartScreen::handleInput(const std::optional<sf::Event> &event) {
     }
 }
 
-void StartScreen::onEnter(ResourceManager &resourceManager, sf::RenderWindow &window_) {
-    window = &window_;
+void StartScreen::onEnter(const GameContext context) {
+    window = context.window;
     clock.restart();
-    const std::weak_ptr<sf::Font> font = resourceManager.getFont(bb::fontResources[0].name);
+    const std::weak_ptr<sf::Font> font = context.resourceManager->getFont(bb::fontResources[0].name);
 
     sf::Text titleText(*font.lock(), "ROGUE", 48);
     titleText.setPosition({0, 0});
