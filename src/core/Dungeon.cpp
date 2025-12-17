@@ -24,14 +24,3 @@ dg::Dungeon::Dungeon(std::vector<Room> rooms, std::vector<Edge> edges) {
     this->rooms = std::move(rooms);
     this->edges = std::move(edges);
 }
-
-void dg::Dungeon::print() {
-    for (const auto& room : rooms) {
-        std::cout << "Room at (" << room.position.x << ", " << room.position.y << ") size (" << room.size.x << ", " << room.size.y << ")" << std::endl;
-    }
-
-    //print edges
-    for (const auto& edge : edges) {
-        std::cout << "Edge from Room " << edge.a << " to Room " << edge.b << std::endl;
-    }
-}

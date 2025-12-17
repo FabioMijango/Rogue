@@ -26,7 +26,6 @@ namespace dg {
         Dungeon();
         Dungeon(std::vector<Room> rooms, std::vector<Edge> edges);
 
-        void print();
     private:
         std::vector<Room> rooms;
         std::vector<Edge> edges;
