@@ -25,6 +25,8 @@ void StartScreen::handleInput(const std::optional<sf::Event> &event) {
     if (event->is<sf::Event::KeyPressed>()) {
         if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape)
             window->close();
+        else
+            screenId = ScreenId::Game;
     }
 }
 
