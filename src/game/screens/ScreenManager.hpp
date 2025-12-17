@@ -9,12 +9,14 @@ public:
     ScreenManager() = default;
     void init(GameContext ctx);
     void handleInput(const std::optional<sf::Event> &event) const;
-    void update(double dt) const;
+    void update(double dt);
     void render() const;
-    void changeScreen(std::unique_ptr<Screen> newScreen);
 
 private:
     GameContext context;
     std::unique_ptr<Screen> currentScreen;
     std::unique_ptr<Screen> previousScreen;
+private:
+    void changeScreen(std::unique_ptr<Screen> newScreen);
+    [[nodiscard]] std::unique_ptr<Screen> getScreenById(ScreenId id) ;
 };

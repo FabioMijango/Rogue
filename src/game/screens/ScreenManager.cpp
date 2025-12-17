@@ -1,5 +1,7 @@
 #include "ScreenManager.hpp"
 
+#include "GameScreen.hpp"
+
 void ScreenManager::init(const GameContext ctx) {
     context = ctx;
     currentScreen = nullptr;
@@ -14,8 +16,12 @@ void ScreenManager::handleInput(const std::optional<sf::Event> &event) const {
     currentScreen->handleInput(event);
 }
 
-void ScreenManager::update(double dt) const {
+void ScreenManager::update(double dt) {
     currentScreen->update(dt);
+
+    ScreenId pendingScreen = currentScreen->getPendingScreen();
+    if (pendingScreen != ScreenId::None)
+        changeScreen(getScreenById(pendingScreen));
 }
 
 void ScreenManager::render() const {
@@ -30,4 +36,19 @@ void ScreenManager::changeScreen(std::unique_ptr<Screen> newScreen) {
     if (previousScreen) {
         previousScreen->onExit();
     }
+}
+
+std::unique_ptr<Screen> ScreenManager::getScreenById(const ScreenId id) {
+    std::unique_ptr<Screen> result;
+    switch (id) {
+        case ScreenId::Game:
+            result = std::make_unique<GameScreen>();
+            break;
+        case ScreenId::Start:
+            result = std::make_unique<StartScreen>();
+            break;
+        default:
+            throw std::runtime_error("Invalid screen id");
+    }
+    return result;
 }
