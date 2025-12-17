@@ -8,7 +8,7 @@ class StartScreen : public Screen {
 public:
     void update(double dt) override;
     void render() override;
-    void handleInput() override;
+    void handleInput(const std::optional<sf::Event> &event) override;
     void onEnter(ResourceManager &resourceManager, sf::RenderWindow &window_) override;
     void onExit() override;
 

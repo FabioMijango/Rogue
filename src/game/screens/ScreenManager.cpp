@@ -5,8 +5,8 @@ void ScreenManager::init() {
     previousScreen = nullptr;
 }
 
-void ScreenManager::handleInput() const {
-    currentScreen->handleInput();
+void ScreenManager::handleInput(const std::optional<sf::Event> &event) const {
+    currentScreen->handleInput(event);
 }
 
 void ScreenManager::update(double dt) const {

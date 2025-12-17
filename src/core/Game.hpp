@@ -16,7 +16,7 @@ private:
     sf::Clock clock;
     double delta;
 private:
-    void handleInput();
+    void handleInput(const std::optional<sf::Event> &event) const;
     void update();
     void draw();
 };

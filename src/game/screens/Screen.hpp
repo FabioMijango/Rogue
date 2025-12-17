@@ -5,7 +5,7 @@
 class Screen {
 public:
     virtual ~Screen() = default;
-    virtual void handleInput() = 0;
+    virtual void handleInput(const std::optional<sf::Event> &event) = 0;
     virtual void update(double dt) = 0;
     virtual void render() = 0;
     virtual void onEnter(ResourceManager& resourceManager, sf::RenderWindow &window_) = 0;

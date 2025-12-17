@@ -15,8 +15,8 @@ Game::Game() {
     delta = clock.restart().asSeconds();
 }
 
-void Game::handleInput() {
-    screenManager.handleInput();
+void Game::handleInput(const std::optional<sf::Event> &event) const {
+    screenManager.handleInput(event);
 }
 
 void Game::update() {
@@ -32,7 +32,9 @@ void Game::draw() {
 
 void Game::run() {
     while (window.isOpen()) {
-        handleInput();
+        while (const std::optional event = window.pollEvent()) {
+            handleInput(event);
+        }
         update();
         draw();
     }

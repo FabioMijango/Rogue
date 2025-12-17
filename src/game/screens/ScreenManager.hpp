@@ -6,7 +6,7 @@ class ScreenManager {
 public:
     ScreenManager() = default;
     void init();
-    void handleInput() const;
+    void handleInput(const std::optional<sf::Event> &event) const;
     void update(double dt) const;
     void render() const;
     void changeScreen(std::unique_ptr<Screen> newScreen);

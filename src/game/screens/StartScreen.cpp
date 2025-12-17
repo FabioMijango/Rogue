@@ -5,7 +5,7 @@ void StartScreen::update(double dt) {
         colorChanged = !colorChanged;
         clock.restart();
         for (auto &drawable: drawables) {
-            if (auto *text = dynamic_cast<sf::Text*>(drawable.get())) {
+            if (auto *text = dynamic_cast<sf::Text *>(drawable.get())) {
                 text->setFillColor(colorChanged ? sf::Color(128, 128, 128) : sf::Color::White);
             }
         }
@@ -13,17 +13,18 @@ void StartScreen::update(double dt) {
 }
 
 void StartScreen::render() {
-    for (const auto& drawable : drawables) {
+    for (const auto &drawable: drawables) {
         window->draw(*drawable);
     }
 }
 
-void StartScreen::handleInput() {
-    while (const std::optional event = window->pollEvent()) {
-        if (event->is<sf::Event::KeyPressed>()) {
-            if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape)
-                window->close();
-        }
+void StartScreen::handleInput(const std::optional<sf::Event> &event) {
+    if (event->is<sf::Event::Closed>())
+        window->close();
+
+    if (event->is<sf::Event::KeyPressed>()) {
+        if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape)
+            window->close();
     }
 }
 
