@@ -3,7 +3,6 @@
 
 #include "ResourceManager.hpp"
 #include "../game/screens/ScreenManager.hpp"
-#include "../game/screens/StartScreen.hpp"
 
 class Game {
 public:

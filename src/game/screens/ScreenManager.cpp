@@ -1,8 +1,14 @@
 #include "ScreenManager.hpp"
 
-void ScreenManager::init() {
+void ScreenManager::init(const Context ctx) {
+    context = ctx;
     currentScreen = nullptr;
     previousScreen = nullptr;
+
+    StartScreen startScreen;
+    startScreen.onEnter(*ctx.resourceManager, *ctx.window);
+
+    changeScreen(std::make_unique<StartScreen>(startScreen));
 }
 
 void ScreenManager::handleInput(const std::optional<sf::Event> &event) const {

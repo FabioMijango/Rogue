@@ -7,10 +7,7 @@ Game::Game() {
     const sf::View view({0.f, 0.f}, sf::Vector2f(window.getSize()));
     window.setView(view);
 
-    screenManager.init();
-    StartScreen startScreen;
-    startScreen.onEnter(resourceManager, window);
-    screenManager.changeScreen(std::make_unique<StartScreen>(startScreen));
+    screenManager.init({&resourceManager, &window});
 
     delta = clock.restart().asSeconds();
 }
