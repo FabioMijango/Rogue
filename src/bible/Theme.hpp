@@ -37,5 +37,5 @@ private:
 private:
     void setVariables();
     void generateTheme();
-    void generateDungeon();
+    void generateDungeonThemeFromData();
 };

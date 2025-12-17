@@ -3,7 +3,7 @@
 DungeonTheme DungeonThemeBuilder::generateDungeonTheme() {
     setVariables();
     generateTheme();
-    generateDungeon();
+    generateDungeonThemeFromData();
     return dungeonTheme;
 }
 
@@ -33,7 +33,7 @@ void DungeonThemeBuilder::generateTheme() {
     };
 }
 
-void DungeonThemeBuilder::generateDungeon() {
+void DungeonThemeBuilder::generateDungeonThemeFromData() {
     dungeonTheme = DungeonTheme{
         wallSet,
         floorSet
