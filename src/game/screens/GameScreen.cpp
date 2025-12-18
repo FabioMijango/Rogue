@@ -17,6 +17,7 @@ void GameScreen::render() {
     for (const auto& drawable : drawables) {
         window->draw(*drawable);
     }
+    dungeon.draw(*window);
 }
 
 void GameScreen::onEnter(const GameContext context) {
