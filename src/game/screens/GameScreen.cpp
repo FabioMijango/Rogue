@@ -7,6 +7,14 @@ void GameScreen::handleInput(const std::optional<sf::Event> &event) {
     else if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
 
     }
+
+    else if (const auto* mouseWheelScrolled = event->getIf<sf::Event::MouseWheelScrolled>()) {
+        if (mouseWheelScrolled->wheel == sf::Mouse::Wheel::Vertical) {
+            sf::View view = window->getView();
+            view.zoom(1.0f - mouseWheelScrolled->delta * 0.1f);
+            window->setView(view);
+        }
+    }
 }
 
 void GameScreen::update(double dt) {
