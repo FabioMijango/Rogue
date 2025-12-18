@@ -20,7 +20,8 @@ dg::Dungeon::Dungeon() {
     edges = std::vector<Edge>();
 }
 
-dg::Dungeon::Dungeon(std::vector<Room> rooms, std::vector<Edge> edges) {
+dg::Dungeon::Dungeon(std::vector<Room> rooms, std::vector<Edge> edges, std::unordered_map<uint16_t, sf::Sprite>& tileCache) {
     this->rooms = std::move(rooms);
     this->edges = std::move(edges);
+    this->tileCache = std::move(tileCache);
 }

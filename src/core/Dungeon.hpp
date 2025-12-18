@@ -1,7 +1,8 @@
 #pragma once
-#include <iostream>
 #include <memory>
+#include <unordered_map>
 #include <vector>
+#include <SFML/Graphics/Sprite.hpp>
 
 #include "SFML/Graphics/Rect.hpp"
 #include "SFML/System/Vector2.hpp"
@@ -22,12 +23,12 @@ namespace dg {
 
     class Dungeon {
     public:
-    public:
         Dungeon();
-        Dungeon(std::vector<Room> rooms, std::vector<Edge> edges);
+        Dungeon(std::vector<Room> rooms, std::vector<Edge> edges, std::unordered_map<uint16_t, sf::Sprite>& tileCache);
 
     private:
         std::vector<Room> rooms;
         std::vector<Edge> edges;
+        std::unordered_map<uint16_t, sf::Sprite> tileCache;
     };
 }
