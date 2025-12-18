@@ -1,11 +1,12 @@
 #include "DungeonGenerator.hpp"
 
-dg::Dungeon dg::DungeonGenerator::generateDungeon() {
+dg::Dungeon dg::DungeonGenerator::generateDungeon(ResourceManager &resourceManager) {
     prepare();
     createRooms();
     fixRooms();
     connectRooms();
     setTileMaps();
+    setTileMapsCache(resourceManager);
     return createDungeonFromData();
 }
 
@@ -36,7 +37,6 @@ void dg::DungeonGenerator::fixRooms() {
         bool hasIntersection = false;
         for (const auto &fixedRoom : fixedRooms) {
             if (room.getBounds().findIntersection(fixedRoom.getBounds())) {
-                std::cout << "Intersection" << std::endl;
                 hasIntersection = true;
                 break;
             }
@@ -103,6 +103,18 @@ void dg::DungeonGenerator::setTileMaps() {
     }
 }
 
+void dg::DungeonGenerator::setTileMapsCache(ResourceManager &resourceManager) {
+    const std::weak_ptr<Atlas> atlas = resourceManager.getAtlas(bb::imageResources[0].name);
+
+    tileCache.insert({theme.wall.topId, atlas.lock()->getSprite(theme.wall.topId)});
+    tileCache.insert({theme.wall.sideId, atlas.lock()->getSprite(theme.wall.sideId)});
+    tileCache.insert({theme.floor.baseId, atlas.lock()->getSprite(theme.floor.baseId)});
+    for (auto id : theme.floor.decorations) {
+        tileCache.insert({id, atlas.lock()->getSprite(id)});
+    }
+
+}
+
 dg::Dungeon dg::DungeonGenerator::createDungeonFromData() {
-    return Dungeon(rooms, edges);
+    return Dungeon(rooms, edges, tileCache);
 }
