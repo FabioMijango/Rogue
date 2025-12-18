@@ -2,6 +2,8 @@
 #include <SFML/Graphics/Text.hpp>
 
 #include "Screen.hpp"
+#include "../../core/Dungeon.hpp"
+#include "../../core/DungeonGenerator.hpp"
 
 class GameScreen : public Screen {
 public:
@@ -10,5 +12,8 @@ public:
     void render() override;
     void onEnter(GameContext context) override;
     void onExit() override;
+
+private:
+    dg::Dungeon dungeon;
 
 };

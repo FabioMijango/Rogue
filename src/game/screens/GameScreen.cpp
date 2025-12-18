@@ -26,6 +26,9 @@ void GameScreen::onEnter(const GameContext context) {
     sf::Text titleText(*font.lock(), "GAME SCREEN", 48);
     titleText.setPosition({0, 0});
     drawables.push_back(std::make_shared<sf::Text>(titleText));
+
+    dg::DungeonGenerator generator;
+    dungeon = generator.generateDungeon(*context.resourceManager);
 }
 
 void GameScreen::onExit() {
