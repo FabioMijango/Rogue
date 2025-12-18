@@ -2,10 +2,10 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-
-#include "SFML/Graphics/Rect.hpp"
-#include "SFML/System/Vector2.hpp"
+#include <SFML/System/Vector2.hpp>
 
 namespace dg {
     struct Edge {
@@ -19,13 +19,14 @@ namespace dg {
         Room();
         Room(sf::Vector2f position, sf::Vector2u size);
         [[nodiscard]] sf::FloatRect getBounds() const;
+        void draw(sf::RenderWindow &window, const std::unordered_map<uint16_t, sf::Sprite>& tileCache) const;
     };
 
     class Dungeon {
     public:
         Dungeon();
         Dungeon(std::vector<Room> rooms, std::vector<Edge> edges, std::unordered_map<uint16_t, sf::Sprite>& tileCache);
-
+        void draw(sf::RenderWindow &window) const;
     private:
         std::vector<Room> rooms;
         std::vector<Edge> edges;
