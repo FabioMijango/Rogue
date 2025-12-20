@@ -36,6 +36,8 @@ add_executable(main src/main.cpp
         src/game/screens/GameScreen.cpp
         src/game/screens/GameScreen.hpp
         src/game/GameContext.hpp
+        src/game/objects/Object.hpp
+        src/game/objects/entities/Entity.hpp
 )
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)
