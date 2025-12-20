@@ -11,5 +11,5 @@ protected:
 
 public:
     void update(double dt) override = 0;
-    void render(sf::RenderWindow &window) const override = 0;
+    void draw(sf::RenderWindow &window) const override = 0;
 };
