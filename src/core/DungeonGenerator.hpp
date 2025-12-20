@@ -13,11 +13,13 @@ namespace dg {
         DungeonGenerator() = default;
         Dungeon generateDungeon(ResourceManager &resourceManager);
     private:
+        Dungeon dungeon;
         short roomCount = 0;
         std::vector<Room> rooms;
         std::vector<Edge> edges;
         std::unordered_map<uint16_t, sf::Sprite> tileCache;
         DungeonTheme theme;
+        EntityManager entityManager;
 
     private:
         void prepare();
@@ -26,7 +28,8 @@ namespace dg {
         void connectRooms();
         void setTileMaps();
         void setTileMapsCache(ResourceManager &resourceManager);
-        Dungeon createDungeonFromData();
+        void createDungeonFromData();
+        void initializeEntities(ResourceManager &resourceManager);
     };
 
 }

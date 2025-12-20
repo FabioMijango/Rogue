@@ -7,7 +7,9 @@ dg::Dungeon dg::DungeonGenerator::generateDungeon(ResourceManager &resourceManag
     connectRooms();
     setTileMaps();
     setTileMapsCache(resourceManager);
-    return createDungeonFromData();
+    initializeEntities(resourceManager);
+    createDungeonFromData();
+    return std::move(dungeon);
 }
 
 void dg::DungeonGenerator::prepare() {
@@ -115,6 +117,14 @@ void dg::DungeonGenerator::setTileMapsCache(ResourceManager &resourceManager) {
 
 }
 
-dg::Dungeon dg::DungeonGenerator::createDungeonFromData() {
-    return Dungeon(rooms, edges, tileCache);
+void dg::DungeonGenerator::initializeEntities(ResourceManager &resourceManager) {
+    const sf::Sprite playerSprite = resourceManager.getAtlas("rogues").lock()->getSprite(0);
+    // TODO: Logic for enemies sprites ...
+    entityManager.init(playerSprite);
+}
+
+void dg::DungeonGenerator::createDungeonFromData() {
+    dungeon = Dungeon(rooms, edges, tileCache, std::move(entityManager));
+    rooms.clear();
+    edges.clear();
 }
