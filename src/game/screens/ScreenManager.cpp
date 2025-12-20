@@ -22,8 +22,8 @@ void ScreenManager::update(double dt) {
         changeScreen(getScreenById(pendingScreen));
 }
 
-void ScreenManager::render() const {
-    currentScreen->render();
+void ScreenManager::draw() const {
+    currentScreen->draw();
 }
 
 void ScreenManager::changeScreen(std::unique_ptr<Screen> newScreen) {

@@ -7,7 +7,7 @@
 class StartScreen : public Screen {
 public:
     void update(double dt) override;
-    void render() override;
+    void draw() override;
     void handleInput(const std::optional<sf::Event> &event) override;
     void onEnter(GameContext context) override;
     void onExit() override;

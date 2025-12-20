@@ -15,7 +15,7 @@ public:
     virtual ~Screen() = default;
     virtual void handleInput(const std::optional<sf::Event> &event) = 0;
     virtual void update(double dt) = 0;
-    virtual void render() = 0;
+    virtual void draw() = 0;
     virtual void onEnter(GameContext context) = 0;
     virtual void onExit() = 0;
 

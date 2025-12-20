@@ -12,7 +12,7 @@ void StartScreen::update(double dt) {
     }
 }
 
-void StartScreen::render() {
+void StartScreen::draw() {
     for (const auto &drawable: drawables) {
         window->draw(*drawable);
     }

@@ -21,7 +21,7 @@ void GameScreen::update(double dt) {
 
 }
 
-void GameScreen::render() {
+void GameScreen::draw() {
     for (const auto& drawable : drawables) {
         window->draw(*drawable);
     }

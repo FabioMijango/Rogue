@@ -23,7 +23,7 @@ void Game::update() {
 
 void Game::draw() {
     window.clear();
-    screenManager.render();
+    screenManager.draw();
     window.display();
 }
 

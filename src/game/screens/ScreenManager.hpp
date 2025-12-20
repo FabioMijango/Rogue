@@ -11,7 +11,7 @@ public:
     void init(GameContext ctx);
     void handleInput(const std::optional<sf::Event> &event) const;
     void update(double dt);
-    void render() const;
+    void draw() const;
 
 private:
     GameContext context;
