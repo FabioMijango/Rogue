@@ -38,7 +38,11 @@ add_executable(main src/main.cpp
         src/game/GameContext.hpp
         src/game/objects/Object.hpp
         src/game/objects/entities/Entity.hpp
+        src/game/objects/entities/Player.cpp
+        src/game/objects/entities/Player.hpp
         src/game/objects/entities/states/State.hpp
+        src/game/objects/EntityManager.cpp
+        src/game/objects/EntityManager.hpp
 )
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)
