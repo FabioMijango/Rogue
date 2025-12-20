@@ -1,13 +1,16 @@
 #pragma once
-#include <unordered_map>
 #include <SFML/Graphics/Sprite.hpp>
+
+#include "entities/Entity.hpp"
+#include "entities/Player.hpp"
 
 class EntityManager {
 public:
-    sf::Sprite& getPlayerSprite();
-    sf::Sprite& getEnemySprite(uint16_t id);
+    void init(sf::Sprite playerSprite);
+    void handleInput(const std::optional<sf::Event> &event);
+    void update(double dt);
+    void draw(sf::RenderWindow &window) const;
 private:
-    std::tuple<uint16_t, sf::Sprite> playerSpritesCache;
-    std::unordered_map<uint16_t, sf::Sprite> enemySpritesCache;
-    // std::unordered_map<uint16_t, sf::Sprite> itemSprites;
+    std::unique_ptr<std::vector<Entity>> enemies;
+    std::unique_ptr<Player> player;
 };
