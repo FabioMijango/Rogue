@@ -15,10 +15,12 @@ void GameScreen::handleInput(const std::optional<sf::Event> &event) {
             window->setView(view);
         }
     }
+
+    dungeon.entityManager.handleInput(event);
 }
 
 void GameScreen::update(double dt) {
-
+    dungeon.entityManager.update(dt);
 }
 
 void GameScreen::draw() {
@@ -26,6 +28,7 @@ void GameScreen::draw() {
         window->draw(*drawable);
     }
     dungeon.draw(*window);
+    dungeon.entityManager.draw(*window);
 }
 
 void GameScreen::onEnter(const GameContext context) {
