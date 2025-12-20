@@ -11,6 +11,7 @@ namespace bb {
 
     inline const Resource imageResources[] = {
         {"tiles", "./res/images/tiles.png", "./res/images/tiles.txt"},
+        {"rogues", "./res/images/rogues.png", "./res/images/rogues.txt"},
     };
 
     inline const Resource fontResources[] = {
