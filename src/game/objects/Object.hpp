@@ -5,7 +5,7 @@
 class Object {
 public:
     sf::Vector2f position;
-    std::weak_ptr<sf::Sprite> sprite;
+    std::unique_ptr<sf::Sprite> sprite;
 public:
     virtual ~Object() = default;
     virtual void update(double dt) = 0;
