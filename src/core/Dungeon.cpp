@@ -30,14 +30,20 @@ dg::Dungeon::Dungeon() {
     edges = std::vector<Edge>();
 }
 
-dg::Dungeon::Dungeon(std::vector<Room> rooms, std::vector<Edge> edges, std::unordered_map<uint16_t, sf::Sprite>& tileCache) {
+dg::Dungeon::Dungeon(
+    std::vector<Room> rooms,
+    std::vector<Edge> edges,
+    std::unordered_map<uint16_t, sf::Sprite>& tileCache,
+    EntityManager entityManager) {
     this->rooms = std::move(rooms);
     this->edges = std::move(edges);
     this->tileCache = std::move(tileCache);
+    this->entityManager = std::move(entityManager);
 }
 
 void dg::Dungeon::draw(sf::RenderWindow &window) const {
     for (auto& room : rooms) {
         room.draw(window, tileCache);
     }
+    entityManager.draw(window);
 }

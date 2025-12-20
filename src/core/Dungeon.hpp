@@ -7,6 +7,8 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
 
+#include "../game/objects/EntityManager.hpp"
+
 namespace dg {
     struct Edge {
         int a, b;
@@ -24,12 +26,16 @@ namespace dg {
 
     class Dungeon {
     public:
+        EntityManager entityManager;
+    public:
         Dungeon();
-        Dungeon(std::vector<Room> rooms, std::vector<Edge> edges, std::unordered_map<uint16_t, sf::Sprite>& tileCache);
+        Dungeon(std::vector<Room> rooms, std::vector<Edge> edges, std::unordered_map<uint16_t, sf::Sprite>& tileCache, EntityManager entityManager);
         void draw(sf::RenderWindow &window) const;
+
     private:
         std::vector<Room> rooms;
         std::vector<Edge> edges;
         std::unordered_map<uint16_t, sf::Sprite> tileCache;
+
     };
 }
