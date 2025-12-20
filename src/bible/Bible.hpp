@@ -28,4 +28,6 @@ namespace bb {
         37, 38, 39,
         44, 45, 46,
         51, 52, 53};
+
+    inline const uint16_t roguesId[] = { 0, 5, 10, 24 };
 }
