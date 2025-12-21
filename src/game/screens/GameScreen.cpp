@@ -28,7 +28,6 @@ void GameScreen::draw() {
         window->draw(*drawable);
     }
     dungeon.draw(*window);
-    dungeon.entityManager.draw(*window);
 }
 
 void GameScreen::onEnter(const GameContext context) {

@@ -31,6 +31,7 @@ namespace dg {
         Dungeon();
         Dungeon(std::vector<Room> rooms, std::vector<Edge> edges, std::unordered_map<uint16_t, sf::Sprite>& tileCache, EntityManager entityManager);
         void draw(sf::RenderWindow &window) const;
+        std::vector<Room>& getRooms();
 
     private:
         std::vector<Room> rooms;

@@ -30,6 +30,10 @@ dg::Dungeon::Dungeon() {
     edges = std::vector<Edge>();
 }
 
+std::vector<dg::Room> & dg::Dungeon::getRooms() {
+    return rooms;
+}
+
 dg::Dungeon::Dungeon(
     std::vector<Room> rooms,
     std::vector<Edge> edges,

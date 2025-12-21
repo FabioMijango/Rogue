@@ -120,7 +120,7 @@ void dg::DungeonGenerator::setTileMapsCache(ResourceManager &resourceManager) {
 void dg::DungeonGenerator::initializeEntities(ResourceManager &resourceManager) {
     const sf::Sprite playerSprite = resourceManager.getAtlas("rogues").lock()->getSprite(0);
     // TODO: Logic for enemies sprites ...
-    entityManager.init(playerSprite);
+    entityManager.init(playerSprite, &rooms);
 }
 
 void dg::DungeonGenerator::createDungeonFromData() {
