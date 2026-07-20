@@ -84,23 +84,21 @@ enum class TileType : uint8_t {
 };
 
 struct CellTile {
-    SDL_FRect gridPos;        // Posición lógica en la cuadrícula (x, y)
-    TileType type;           // Tipo de celda
-    uint32_t roomId;         // A qué sala pertenece
-    const Animation& animation;  // Referencia a la animación que representa esta celda
+    SDL_FRect tileBounds;
+    TileType type;
+    uint32_t roomId;
+    const Animation* animation;
 };
 
 struct Room {
     uint32_t id;
-    SDL_FRect worldBounds;            // Límites (AABB) de la sala en coordenadas de mundo
+    Position position;
+    SDL_FRect worldBounds;
 
     std::vector<CellTile> cells;
 };
 
 struct Dungeon {
-    float roomSize = 0;
-    uint32_t tilesPerRoom = 0;
-    // std::unordered_map<Position, CellTile> tiles = {};
     std::unordered_map<uint32_t, Room> m_rooms = {};
 };
 
@@ -116,19 +114,20 @@ class DungeonGenerator {
 
     static Position newPos(Direction dir, const Position &from);
 
-    void prepare(float roomSize, uint32_t tilesPerRoom);
-    void generateRooms(uint32_t roomsNum);
+    void prepare();
+    void generateRooms();
     void connectRooms();
     void populateRooms();
     void resolveRoomsConnections();
     void generateCollisions(EntityManager& entityManager);
 
     std::vector<CellTile> populateRoomTiles(Position roomPos, uint32_t roomsNum) const;
-
+    void createConnectionBetweenRoom(Direction dir, std::vector<CellTile>& roomTiles, bool sameRoom);
+    void correctionForInitialRoom();
 public:
     DungeonGenerator();
 
-    Dungeon generate(uint32_t roomsNum, float roomSize, uint32_t tilesPerRoom);
+    Dungeon generate();
 
     auto& getRooms() {
         return m_rooms;
