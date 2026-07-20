@@ -24,7 +24,7 @@ bool GameScene::init() {
     Animation* wallAnim =  assets.loadAnimation("wall", bb::tileRes.name, { 0 , 0, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
     if (!wallAnim) return false;
 
-    dungeon = DungeonGenerator().generate(10, bb::ROOM_SIZE, bb::TILES_PER_ROOM);
+    dungeon = DungeonGenerator().generate();
 
     registerAction(SDL_SCANCODE_SPACE, "SPACE");
 
@@ -47,7 +47,7 @@ SDL_AppResult GameScene::eventHandler(const SDL_Event *event) {
 void GameScene::sDoAction(const Action &action) {
     if (action.state == Action::State::Pressed) {
         if (action.name == "SPACE") {
-            dungeon = DungeonGenerator().generate(10, bb::ROOM_SIZE, bb::TILES_PER_ROOM);
+            dungeon = DungeonGenerator().generate();
         }
     }
 }
@@ -64,9 +64,9 @@ void GameScene::sRender(SDL_Renderer *renderer) {
         for (auto& cell : room.cells) {
 
             auto& anim = cell.animation;
-            auto sprite = anim.getSprite();
+            auto sprite = anim->getSprite();
 
-            SDL_RenderTexture(renderer, anim.getTexture(), &sprite.m_textureRect, &cell.gridPos);
+            SDL_RenderTexture(renderer, anim->getTexture(), &sprite.m_textureRect, &cell.tileBounds);
         }
     }
 
