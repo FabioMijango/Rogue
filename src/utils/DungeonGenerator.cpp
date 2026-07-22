@@ -105,11 +105,10 @@ std::vector<CellTile> DungeonGenerator::populateRoomTiles(Position roomPos, cons
         for ( int j = 0; j < bb::TILES_PER_ROOM; j++) {
             // Position (X, Y) in world coordinates
             SDL_FRect tilePos = {
-                // TODO Remove ' + 400'
-                roomPos.x * bb::ROOM_SIZE + i * bb::TILES_PER_ROOM + 400,
-                roomPos.y * bb::ROOM_SIZE + j * bb::TILES_PER_ROOM + 400,
-                bb::TILES_PER_ROOM,
-                bb::TILES_PER_ROOM
+                roomPos.x * bb::ROOM_SIZE + i * bb::TILE_SIZE,
+                roomPos.y * bb::ROOM_SIZE + j * bb::TILE_SIZE,
+                bb::TILE_SIZE,
+                bb::TILE_SIZE
             };
             // Cell type
             TileType tileType = TileType::Floor;
