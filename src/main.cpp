@@ -1,12 +1,9 @@
 #include "GameScene.hpp"
 #include "SGEL.hpp"
 
-constexpr int WIDTH = 1920;
-constexpr int HEIGHT = 1080;
-
 int main() {
     Engine& engine = Engine::Instance();
-    auto result = engine.init({WIDTH, HEIGHT}, 60, std::make_unique<GameScene>());
+    auto result = engine.init({bb::WIDTH, bb::HEIGHT}, 60, std::make_unique<GameScene>());
     if (result != SDL_APP_CONTINUE) {
         engine.sQuit();
         return -1;

@@ -17,12 +17,15 @@ bool GameScene::init() {
 
 
     // Temp floor texture
-    Animation* floorAnim =  assets.loadAnimation("floor", bb::tileRes.name, { 0 , 7 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
+    Animation* floorAnim =  assets.loadAnimation(bb::ANIMID_FLOOR, bb::tileRes.name, { 0 , 7 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
     if (!floorAnim) return false;
 
     // Temp wall texture
-    Animation* wallAnim =  assets.loadAnimation("wall", bb::tileRes.name, { 0 , 0, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
-    if (!wallAnim) return false;
+    Animation* sideWallAnim =  assets.loadAnimation(bb::ANIMID_SIDE_WALL, bb::tileRes.name, { 0 , 0, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
+    if (!sideWallAnim) return false;
+
+    Animation* topWallAnim =  assets.loadAnimation(bb::ANIMID_TOP_WALL, bb::tileRes.name, { 0 , 1 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
+    if (!topWallAnim) return false;
 
     dungeon = DungeonGenerator().generate();
 
