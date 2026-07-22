@@ -27,11 +27,29 @@ bool GameScene::init() {
     dungeon = DungeonGenerator().generate();
 
     registerAction(SDL_SCANCODE_SPACE, "SPACE");
+    registerAction(ScrollType::Vertical, "ZOOM");
+    registerAction(SDL_SCANCODE_A, "RIGHT");
+    registerAction(SDL_SCANCODE_D, "LEFT");
+    registerAction(SDL_SCANCODE_W, "UP");
+    registerAction(SDL_SCANCODE_S, "DOWN");
+
+    player = entityManager.createEntity();
+    entityManager.addComponent<TransformComponent>(player, SDL_FPoint{0, 0}, SDL_FPoint{0, 0});
+    entityManager.addComponent<CameraComponent>(player, SDL_FPoint{0, 0}, 1.f, SDL_FPoint{bb::HEIGHT, bb::WIDTH});
+    entityManager.addComponent<KinematicComponent>(player, SDL_FPoint{ 0.0f, 0.0f }, SDL_FPoint{ 0.0f, 0.0f });
 
     return true;
 }
 
 SDL_AppResult GameScene::update(float deltaTime) {
+    auto* transform = entityManager.getComponent<TransformComponent>(player);
+    auto* kinematic = entityManager.getComponent<KinematicComponent>(player);
+    auto* camera = entityManager.getComponent<CameraComponent>(player);
+
+    transform->position.x += kinematic->velocity.x * deltaTime;
+    transform->position.y += kinematic->velocity.y * deltaTime;
+    camera->position = transform->position;
+
     return SDL_APP_CONTINUE;
 }
 
@@ -45,9 +63,44 @@ SDL_AppResult GameScene::eventHandler(const SDL_Event *event) {
 }
 
 void GameScene::sDoAction(const Action &action) {
+    const float SPEED = 100.f;
+    auto* kinematic = entityManager.getComponent<KinematicComponent>(player);
     if (action.state == Action::State::Pressed) {
+        if (action.name == "RIGHT") {
+            kinematic->velocity.x += -SPEED;
+        }
+        if (action.name == "LEFT") {
+            kinematic->velocity.x += SPEED;
+        }
+        if (action.name == "UP") {
+            kinematic->velocity.y += -SPEED;
+        }
+        if (action.name == "DOWN") {
+            kinematic->velocity.y += SPEED;
+        }
         if (action.name == "SPACE") {
             dungeon = DungeonGenerator().generate();
+        }
+    }
+    else if (action.state == Action::State::Released) {
+        if (action.name == "RIGHT") {
+            kinematic->velocity.x += SPEED;
+        }
+        if (action.name == "LEFT") {
+            kinematic->velocity.x += -SPEED;
+        }
+        if (action.name == "UP") {
+            kinematic->velocity.y += SPEED;
+        }
+        if (action.name == "DOWN") {
+            kinematic->velocity.y += -SPEED;
+        }
+    } else if (action.state == Action::State::Vertical_Scroll) {
+        auto* camera = entityManager.getComponent<CameraComponent>(player);
+        camera->zoom += action.y * 0.1f;
+        camera->position.x += action.y * bb::WIDTH;
+        if (camera->zoom < 0.1f) {
+            camera->zoom = 0.1f;
         }
     }
 }
@@ -60,13 +113,20 @@ void GameScene::sRender(SDL_Renderer *renderer) {
     const auto rect = playerAnim.getSprite().m_textureRect;
     SDL_RenderTexture(renderer, playerAnim.getTexture(), &rect, nullptr);
 
+    auto* camera = entityManager.getComponent<CameraComponent>(player);
+    float screenW = bb::TILE_SIZE * camera->zoom;
+    float screenH = bb::TILE_SIZE * camera->zoom;
+
     for (auto& room : dungeon.m_rooms | std::ranges::views::values) {
         for (auto& cell : room.cells) {
 
             auto& anim = cell.animation;
             auto sprite = anim->getSprite();
 
-            SDL_RenderTexture(renderer, anim->getTexture(), &sprite.m_textureRect, &cell.tileBounds);
+            SDL_FPoint screenPos = sCamera::worldToScreen({cell.tileBounds.x, cell.tileBounds.y }, *camera);
+            SDL_FRect tileBounds = {screenPos.x, screenPos.y, screenW, screenH};
+
+            SDL_RenderTexture(renderer, anim->getTexture(), &sprite.m_textureRect, &tileBounds);
         }
     }
 

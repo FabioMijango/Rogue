@@ -3,6 +3,8 @@
 #include "utils/DungeonGenerator.hpp"
 
 class GameScene : public Scene {
+    EntityManager entityManager;
+    Entity player = -1;
     Dungeon dungeon;
 
 public:
