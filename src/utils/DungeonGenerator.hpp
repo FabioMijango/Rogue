@@ -123,11 +123,10 @@ class DungeonGenerator {
 
     std::vector<CellTile> populateRoomTiles(Position roomPos, uint32_t roomsNum) const;
     void createConnectionBetweenRoom(Direction dir, std::vector<CellTile>& roomTiles, bool sameRoom);
-    void correctionForInitialRoom();
 public:
     DungeonGenerator();
 
-    Dungeon generate();
+    Dungeon generate(EntityManager& entityManager);
 
     auto& getRooms() {
         return m_rooms;

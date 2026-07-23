@@ -27,8 +27,6 @@ bool GameScene::init() {
     Animation* topWallAnim =  assets.loadAnimation(bb::ANIMID_TOP_WALL, bb::tileRes.name, { 0 , 1 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
     if (!topWallAnim) return false;
 
-    dungeon = DungeonGenerator().generate();
-
     registerAction(SDL_SCANCODE_SPACE, "SPACE");
     registerAction(ScrollType::Vertical, "ZOOM");
     registerAction(SDL_SCANCODE_A, "RIGHT");
@@ -41,6 +39,8 @@ bool GameScene::init() {
     entityManager.addComponent<CameraComponent>(player, SDL_FPoint{0, 0}, 1.f, SDL_FPoint{bb::HEIGHT, bb::WIDTH});
     entityManager.addComponent<KinematicComponent>(player, SDL_FPoint{ 0.0f, 0.0f }, SDL_FPoint{ 0.0f, 0.0f });
 
+    dungeon = DungeonGenerator().generate(entityManager);
+
     return true;
 }
 
@@ -49,9 +49,13 @@ SDL_AppResult GameScene::update(float deltaTime) {
     auto* kinematic = entityManager.getComponent<KinematicComponent>(player);
     auto* camera = entityManager.getComponent<CameraComponent>(player);
 
-    transform->position.x += kinematic->velocity.x * deltaTime;
-    transform->position.y += kinematic->velocity.y * deltaTime;
-    camera->position = transform->position;
+    auto deltaX = kinematic->velocity.x * deltaTime;
+    auto deltaY = kinematic->velocity.y * deltaTime;
+    transform->position.x += deltaX;
+    transform->position.y += deltaY;
+    camera->position.x += deltaX;
+    camera->position.y += deltaY;
+
 
     return SDL_APP_CONTINUE;
 }
@@ -82,7 +86,7 @@ void GameScene::sDoAction(const Action &action) {
             kinematic->velocity.y += SPEED;
         }
         if (action.name == "SPACE") {
-            dungeon = DungeonGenerator().generate();
+            dungeon = DungeonGenerator().generate(entityManager);
         }
     }
     else if (action.state == Action::State::Released) {
@@ -101,7 +105,7 @@ void GameScene::sDoAction(const Action &action) {
     } else if (action.state == Action::State::Vertical_Scroll) {
         auto* camera = entityManager.getComponent<CameraComponent>(player);
         camera->zoom += action.y * 0.1f;
-        camera->position.x += action.y * bb::WIDTH;
+        // TODO: Fix camera movement when zoom occurs
         if (camera->zoom < 0.1f) {
             camera->zoom = 0.1f;
         }
@@ -131,6 +135,18 @@ void GameScene::sRender(SDL_Renderer *renderer) {
 
             SDL_RenderTexture(renderer, anim->getTexture(), &sprite.m_textureRect, &tileBounds);
         }
+    }
+
+    // TODO: Remove
+    //  Render the box colliders for debugging
+    auto ids = entityManager.getSparseSet<BoxColliderComponent>().getKeys();
+    for (const auto& id : ids) {
+        const auto b = entityManager.getComponent<BoxColliderComponent>(id);
+        const auto t = entityManager.getComponent<TransformComponent>(id);
+
+        auto [ x, y ] = sCamera::worldToScreen({t->position.x, t->position.y}, *camera);
+        SDL_FRect tileBounds = {x, y, b->width * camera->zoom, b->height * camera->zoom};
+        SDL_RenderRect(renderer, &tileBounds);
     }
 
     SDL_RenderPresent(renderer);

@@ -165,7 +165,6 @@ void DungeonGenerator::resolveRoomsConnections() {
         }
     }
 
-    // correctionForInitialRoom();
 }
 
 void DungeonGenerator::createConnectionBetweenRoom(Direction dir, std::vector<CellTile> &roomTiles, bool sameRoom) {
@@ -188,40 +187,33 @@ void DungeonGenerator::createConnectionBetweenRoom(Direction dir, std::vector<Ce
                 (dir == Direction::LEFT && j == 0 && i >= doorStart && i <= doorEnd) ||
                 (dir == Direction::RIGHT && j == size - 1 && i >= doorStart && i <= doorEnd)) {
                 roomTiles[j * size + i].animation = &floor;
+                roomTiles[j * size + i].type = TileType::Floor;
             }
         }
     }
 }
 
-void DungeonGenerator::correctionForInitialRoom() {
-    Position initRoom = {0, 0};
-    int size = bb::TILES_PER_ROOM;
-    int doorStart = size / 2 - 2;
-    int doorEnd = size / 2 + 1;
-    auto& wall = Assets::Instance().getAnimation(bb::ANIMID_SIDE_WALL);
+void DungeonGenerator::generateCollisions(EntityManager& entityManager) {
+    // TODO: Implement a better collision system, for now just create a box collider for each wall tile
+    //      Create a collision for each whole wall (At least for room)
     for (auto& room : dungeon.m_rooms | std::views::values) {
-        if (room.position == initRoom) {
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-                    if ((i == 0 || i == size - 1) && (j < doorStart || j > doorEnd)) {
-                        room.cells[j * size + i].animation = &wall;
-                    }
-                    else if ((j == 0 || j == size - 1) && (i < doorStart || i > doorEnd)) {
-                        room.cells[j * size + i].animation = &wall;
-                    }
-                }
+        for (auto& cell : room.cells) {
+            if (cell.type == TileType::Wall) {
+                auto e = entityManager.createEntity();
+                entityManager.addComponent<TransformComponent>(e, SDL_FPoint{cell.tileBounds.x, cell.tileBounds.y}, SDL_FPoint{1.0f, 1.0f});
+                entityManager.addComponent<BoxColliderComponent>(e, bb::TILE_SIZE, bb::TILE_SIZE, SDL_FPoint{0.0f, 0.0f});
             }
-            break;
         }
     }
 }
 
-Dungeon DungeonGenerator::generate() {
+Dungeon DungeonGenerator::generate(EntityManager& entityManager) {
     prepare();
     generateRooms();
     connectRooms();
     populateRooms();
     resolveRoomsConnections();
+    generateCollisions(entityManager);
 
     return dungeon;
 }
