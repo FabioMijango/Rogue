@@ -10,7 +10,7 @@ class GameScene : public Scene {
 public:
     ~GameScene() noexcept override;
 
-    bool init() override;
+    bool init(void** screenData) override;
     void exit() override;
 
     SDL_AppResult update(float deltaTime) override;

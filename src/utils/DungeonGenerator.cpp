@@ -202,6 +202,7 @@ void DungeonGenerator::generateCollisions(EntityManager& entityManager) {
                 auto e = entityManager.createEntity();
                 entityManager.addComponent<TransformComponent>(e, SDL_FPoint{cell.tileBounds.x, cell.tileBounds.y}, SDL_FPoint{1.0f, 1.0f});
                 entityManager.addComponent<BoxColliderComponent>(e, bb::TILE_SIZE, bb::TILE_SIZE, SDL_FPoint{0.0f, 0.0f});
+                entityManager.addComponent<TagComponent>(e, "Wall");
             }
         }
     }

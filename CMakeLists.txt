@@ -8,8 +8,7 @@ include(FetchContent)
 FetchContent_Declare(
         SGEL
         GIT_REPOSITORY https://github.com/FabioMijango/SGEL.git
-        # TODO: Change to a stable release tag when available
-        GIT_TAG e239649faa651defb1cda1dc456236e2bcb4ebfa
+        GIT_TAG v1.2
         GIT_SHALLOW TRUE
         EXCLUDE_FROM_ALL
 )

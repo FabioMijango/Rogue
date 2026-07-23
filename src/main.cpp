@@ -3,7 +3,7 @@
 
 int main() {
     Engine& engine = Engine::Instance();
-    auto result = engine.init({bb::WIDTH, bb::HEIGHT}, 60, std::make_unique<GameScene>());
+    auto result = engine.init({bb::WIDTH, bb::HEIGHT}, 60, std::make_unique<GameScene>(), "Rogue");
     if (result != SDL_APP_CONTINUE) {
         engine.sQuit();
         return -1;
