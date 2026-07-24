@@ -20,7 +20,7 @@ bool GameScene::init(void** screenData) {
 
     player = entityManager.createEntity();
     entityManager.addComponent<TransformComponent>(player, SDL_FPoint{0, 0}, SDL_FPoint{0, 0});
-    entityManager.addComponent<CameraComponent>(player, SDL_FPoint{0, 0}, 1.f, SDL_FPoint{bb::HEIGHT, bb::WIDTH});
+    entityManager.addComponent<CameraComponent>(player, SDL_FPoint{bb::TILE_SIZE / 2.f, bb::TILE_SIZE / 2.f}, 1.f, SDL_FPoint{static_cast<float>(bb::WIDTH), static_cast<float>(bb::HEIGHT)});
     entityManager.addComponent<KinematicComponent>(player, SDL_FPoint{ 0.0f, 0.0f }, SDL_FPoint{ 0.0f, 0.0f });
 
     dungeon = DungeonGenerator().generate(entityManager);
@@ -33,12 +33,11 @@ SDL_AppResult GameScene::update(float deltaTime) {
     auto* kinematic = entityManager.getComponent<KinematicComponent>(player);
     auto* camera = entityManager.getComponent<CameraComponent>(player);
 
-    auto deltaX = kinematic->velocity.x * deltaTime;
-    auto deltaY = kinematic->velocity.y * deltaTime;
-    transform->position.x += deltaX;
-    transform->position.y += deltaY;
-    camera->position.x += deltaX;
-    camera->position.y += deltaY;
+    transform->position.x += kinematic->velocity.x * deltaTime;
+    transform->position.y += kinematic->velocity.y * deltaTime;
+    
+    camera->position.x = transform->position.x + bb::TILE_SIZE / 2.0f;
+    camera->position.y = transform->position.y + bb::TILE_SIZE / 2.0f;
 
 
     return SDL_APP_CONTINUE;
