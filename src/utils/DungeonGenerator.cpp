@@ -210,6 +210,26 @@ void DungeonGenerator::generateCollisions(EntityManager& entityManager) {
     }
 }
 
+void DungeonGenerator::populateWithEnemies(EntityManager &entityManager) {
+    for (auto& room : dungeon.m_rooms | std::views::values) {
+        if (room.id == 0) {
+            continue;
+        }
+        for (auto& cell : room.cells) {
+            if (cell.type == TileType::Wall) {
+                continue;
+            }
+
+            if (diceDistribution(gen) < bb::PROB_TO_SPAWN_ENEMY) {
+                auto enemy = entityManager.createEntity();
+                entityManager.addComponent<TransformComponent>(enemy, SDL_FPoint{cell.tileBounds.x, cell.tileBounds.y}, SDL_FPoint{1.0f, 1.0f});
+                entityManager.addComponent<BoxColliderComponent>(enemy, bb::TILE_SIZE, bb::TILE_SIZE, SDL_FPoint{0.0f, 0.0f});
+                entityManager.addComponent<EnemyTagComponent>(enemy);
+            }
+        }
+    }
+}
+
 Dungeon DungeonGenerator::generate(EntityManager& entityManager) {
     prepare();
     generateRooms();
@@ -217,6 +237,7 @@ Dungeon DungeonGenerator::generate(EntityManager& entityManager) {
     populateRooms();
     resolveRoomsConnections();
     generateCollisions(entityManager);
+    populateWithEnemies(entityManager);
 
     return dungeon;
 }

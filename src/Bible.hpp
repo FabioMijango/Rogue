@@ -7,6 +7,7 @@ namespace bb {
         std::string path;
     };
     const Resource rogueRes = {"rogues", "./res/images/rogues.png"};
+    const Resource monsterRes = {"monsters", "./res/images/monsters.png"};
     const Resource tileRes = {"tiles", "./res/images/tiles.png"};
 
     // Window config
@@ -23,8 +24,13 @@ namespace bb {
     constexpr float TILE_SIZE = ROOM_SIZE / TILES_PER_ROOM;
 
     constexpr float PROB_TO_BACK_TO_START = 0.4f;
+    constexpr float PROB_TO_SPAWN_ENEMY = 0.02f;
 
     // Animations ID
+    constexpr std::string ANIMID_PLAYER = "player";
+
+    constexpr std::string ANIMID_ENEMY = "enemy";
+
     constexpr std::string ANIMID_TOP_WALL = "topWall";
     constexpr std::string ANIMID_SIDE_WALL = "sideWall";
 

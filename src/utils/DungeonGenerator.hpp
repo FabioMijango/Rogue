@@ -120,6 +120,7 @@ class DungeonGenerator {
     void populateRooms();
     void resolveRoomsConnections();
     void generateCollisions(EntityManager& entityManager);
+    void populateWithEnemies(EntityManager& entityManager);
 
     std::vector<CellTile> populateRoomTiles(Position roomPos, uint32_t roomsNum) const;
     void createConnectionBetweenRoom(Direction dir, std::vector<CellTile>& roomTiles, bool sameRoom);
