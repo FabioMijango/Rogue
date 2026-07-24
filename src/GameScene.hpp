@@ -10,6 +10,10 @@ class GameScene : public Scene {
     Entity player = -1;
     Dungeon dungeon;
 
+    void renderTiles(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
+    void renderEnemies(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
+    void renderPlayer(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
+
 public:
     ~GameScene() noexcept override;
 
@@ -22,4 +26,5 @@ public:
     void sRender(SDL_Renderer *renderer) override;
 
     std::shared_ptr<Scene> changeScene() override;
+
 };
