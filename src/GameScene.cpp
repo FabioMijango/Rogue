@@ -23,7 +23,7 @@ bool GameScene::init(void** screenData) {
     entityManager.addComponent<TransformComponent>(player, SDL_FPoint{0, 0}, SDL_FPoint{0, 0});
     entityManager.addComponent<CameraComponent>(player, SDL_FPoint{bb::TILE_SIZE / 2.f, bb::TILE_SIZE / 2.f}, 1.f, SDL_FPoint{static_cast<float>(bb::WIDTH), static_cast<float>(bb::HEIGHT)});
     entityManager.addComponent<KinematicComponent>(player, SDL_FPoint{ 0.0f, 0.0f }, SDL_FPoint{ 0.0f, 0.0f });
-    entityManager.addComponent<PlayerRotatedComponent>(player, false);
+    entityManager.addComponent<RotatedComponent>(player, SDL_FLIP_NONE);
     entityManager.addComponent<PlayerTagComponent>(player);
 
     dungeon = DungeonGenerator().generate(entityManager);
@@ -58,12 +58,15 @@ SDL_AppResult GameScene::eventHandler(const SDL_Event *event) {
 void GameScene::sDoAction(const Action &action) {
     const float SPEED = 100.f;
     auto* kinematic = entityManager.getComponent<KinematicComponent>(player);
+    auto* rotation = entityManager.getComponent<RotatedComponent>(player);
     if (action.state == Action::State::Pressed) {
         if (action.name == "RIGHT") {
             kinematic->velocity.x += -SPEED;
+            rotation->flipMode = SDL_FLIP_NONE;
         }
         if (action.name == "LEFT") {
             kinematic->velocity.x += SPEED;
+            rotation->flipMode = SDL_FLIP_HORIZONTAL;
         }
         if (action.name == "UP") {
             kinematic->velocity.y += -SPEED;
@@ -78,9 +81,11 @@ void GameScene::sDoAction(const Action &action) {
     else if (action.state == Action::State::Released) {
         if (action.name == "RIGHT") {
             kinematic->velocity.x += SPEED;
+            // rotation->flipMode = kinematic->velocity.x > 0 ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL;
         }
         if (action.name == "LEFT") {
             kinematic->velocity.x += -SPEED;
+            // rotation->flipMode = kinematic->velocity.x > 0 ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL;
         }
         if (action.name == "UP") {
             kinematic->velocity.y += SPEED;
@@ -168,5 +173,7 @@ void GameScene::renderPlayer(SDL_Renderer *renderer, const CameraComponent *came
     auto [ x, y ] =  sCamera::worldToScreen({transform->position.x, transform->position.y}, *camera);
     SDL_FRect playerBounds = {x, y, screenSize.x, screenSize.y};
 
-    SDL_RenderTexture(renderer, playerAnim.getTexture(), &playerSprite.m_textureRect, &playerBounds);
+    auto* rotation = entityManager.getComponent<RotatedComponent>(player);
+
+    SDL_RenderTextureRotated(renderer, playerAnim.getTexture(), &playerSprite.m_textureRect, &playerBounds, 0.0, nullptr, rotation->flipMode);
 }
