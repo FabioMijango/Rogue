@@ -4,6 +4,7 @@
 #include "utils/AssetsUtils.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/DungeonGenerator.hpp"
+#include <algorithm>
 
 GameScene::~GameScene() = default;
 
@@ -20,7 +21,8 @@ bool GameScene::init(void** screenData) {
     registerAction(SDL_SCANCODE_S, "DOWN");
 
     player = entityManager.createEntity();
-    entityManager.addComponent<TransformComponent>(player, SDL_FPoint{0, 0}, SDL_FPoint{0, 0});
+    entityManager.addComponent<TransformComponent>(player, SDL_FPoint{bb::ROOM_SIZE / 2.f, bb::ROOM_SIZE / 2.f}, SDL_FPoint{1.0f, 1.0f});
+    entityManager.addComponent<BoxColliderComponent>(player, SDL_FPoint{bb::TILE_SIZE, bb::TILE_SIZE}, SDL_FPoint{0, 0});
     entityManager.addComponent<CameraComponent>(player, SDL_FPoint{bb::TILE_SIZE / 2.f, bb::TILE_SIZE / 2.f}, 1.f, SDL_FPoint{static_cast<float>(bb::WIDTH), static_cast<float>(bb::HEIGHT)});
     entityManager.addComponent<KinematicComponent>(player, SDL_FPoint{ 0.0f, 0.0f }, SDL_FPoint{ 0.0f, 0.0f });
     entityManager.addComponent<RotatedComponent>(player, SDL_FLIP_NONE);
@@ -32,16 +34,53 @@ bool GameScene::init(void** screenData) {
 }
 
 SDL_AppResult GameScene::update(float deltaTime) {
-    auto* transform = entityManager.getComponent<TransformComponent>(player);
-    auto* kinematic = entityManager.getComponent<KinematicComponent>(player);
+    auto* transformPlayer = entityManager.getComponent<TransformComponent>(player);
+    auto* kinematicPlayer = entityManager.getComponent<KinematicComponent>(player);
     auto* camera = entityManager.getComponent<CameraComponent>(player);
 
-    transform->position.x += kinematic->velocity.x * deltaTime;
-    transform->position.y += kinematic->velocity.y * deltaTime;
+    transformPlayer->position.x += kinematicPlayer->velocity.x * deltaTime;
+    transformPlayer->position.y += kinematicPlayer->velocity.y * deltaTime;
 
-    camera->position.x = transform->position.x + bb::TILE_SIZE / 2.0f;
-    camera->position.y = transform->position.y + bb::TILE_SIZE / 2.0f;
+    spatialGrid.populateMap();
+    auto potencialCollisions = spatialGrid.getPotentialCollisions();
 
+    for (auto& [entityA, entityB] : potencialCollisions) {
+        auto* transformA = entityManager.getComponent<TransformComponent>(entityA);
+        auto* transformB = entityManager.getComponent<TransformComponent>(entityB);
+        auto* colliderA = entityManager.getComponent<BoxColliderComponent>(entityA);
+        auto* colliderB = entityManager.getComponent<BoxColliderComponent>(entityB);
+
+        SDL_FRect rectA = sPhysics::getBoundingBox(*transformA, *colliderA);
+        SDL_FRect rectB = sPhysics::getBoundingBox(*transformB, *colliderB);
+        
+        if (sPhysics::checkAABBCollision(rectA, rectB)) {
+            auto* kinematicA = entityManager.getComponent<KinematicComponent>(entityA);
+            auto* kinematicB = entityManager.getComponent<KinematicComponent>(entityB);
+
+            float overlapX = std::min(rectA.x + rectA.w - rectB.x, rectB.x + rectB.w - rectA.x);
+            float overlapY = std::min(rectA.y + rectA.h - rectB.y, rectB.y + rectB.h - rectA.y);
+
+            bool resolveX = overlapX < overlapY;
+            float overlap = resolveX ? overlapX : overlapY;
+
+            float dir = resolveX ? ((rectA.x < rectB.x) ? -1.0f : 1.0f) 
+                                 : ((rectA.y < rectB.y) ? -1.0f : 1.0f);
+
+            float pushA = (kinematicA && kinematicB) ? (dir * overlap * 0.5f) : (kinematicA ? dir * overlap : 0.0f);
+            float pushB = (kinematicA && kinematicB) ? (-dir * overlap * 0.5f) : (kinematicB ? -dir * overlap : 0.0f);
+
+            if (resolveX) {
+                transformA->position.x += pushA;
+                transformB->position.x += pushB;
+            } else {
+                transformA->position.y += pushA;
+                transformB->position.y += pushB;
+            }
+        }
+    }
+
+    camera->position.x = transformPlayer->position.x + bb::TILE_SIZE / 2.0f;
+    camera->position.y = transformPlayer->position.y + bb::TILE_SIZE / 2.0f;
 
     return SDL_APP_CONTINUE;
 }
@@ -56,23 +95,22 @@ SDL_AppResult GameScene::eventHandler(const SDL_Event *event) {
 }
 
 void GameScene::sDoAction(const Action &action) {
-    const float SPEED = 100.f;
     auto* kinematic = entityManager.getComponent<KinematicComponent>(player);
     auto* rotation = entityManager.getComponent<RotatedComponent>(player);
     if (action.state == Action::State::Pressed) {
         if (action.name == "RIGHT") {
-            kinematic->velocity.x += -SPEED;
+            kinematic->velocity.x += -bb::PLAYER_SPEED;
             rotation->flipMode = SDL_FLIP_NONE;
         }
         if (action.name == "LEFT") {
-            kinematic->velocity.x += SPEED;
+            kinematic->velocity.x += bb::PLAYER_SPEED;
             rotation->flipMode = SDL_FLIP_HORIZONTAL;
         }
         if (action.name == "UP") {
-            kinematic->velocity.y += -SPEED;
+            kinematic->velocity.y += -bb::PLAYER_SPEED;
         }
         if (action.name == "DOWN") {
-            kinematic->velocity.y += SPEED;
+            kinematic->velocity.y += bb::PLAYER_SPEED;
         }
         if (action.name == "SPACE") {
             dungeon = DungeonGenerator().generate(entityManager);
@@ -80,18 +118,16 @@ void GameScene::sDoAction(const Action &action) {
     }
     else if (action.state == Action::State::Released) {
         if (action.name == "RIGHT") {
-            kinematic->velocity.x += SPEED;
-            // rotation->flipMode = kinematic->velocity.x > 0 ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL;
+            kinematic->velocity.x += bb::PLAYER_SPEED;
         }
         if (action.name == "LEFT") {
-            kinematic->velocity.x += -SPEED;
-            // rotation->flipMode = kinematic->velocity.x > 0 ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL;
+            kinematic->velocity.x += -bb::PLAYER_SPEED;
         }
         if (action.name == "UP") {
-            kinematic->velocity.y += SPEED;
+            kinematic->velocity.y += bb::PLAYER_SPEED;
         }
         if (action.name == "DOWN") {
-            kinematic->velocity.y += -SPEED;
+            kinematic->velocity.y += -bb::PLAYER_SPEED;
         }
     } else if (action.state == Action::State::Vertical_Scroll) {
         auto* camera = entityManager.getComponent<CameraComponent>(player);
@@ -112,6 +148,8 @@ void GameScene::sRender(SDL_Renderer *renderer) {
     renderTiles(renderer, camera, screenSize);
     renderEnemies(renderer, camera, screenSize);
     renderPlayer(renderer, camera, screenSize);
+
+    renderCollisionBoxes(renderer, camera, screenSize);
 
     SDL_RenderPresent(renderer);
 }
@@ -136,18 +174,6 @@ void GameScene::renderTiles(SDL_Renderer *renderer, const CameraComponent *camer
             SDL_RenderTexture(renderer, anim->getTexture(), &sprite.m_textureRect, &tileBounds);
         }
     }
-
-    // TODO: Remove
-    //  Render the box colliders for debugging
-    auto tileIds = entityManager.getSparseSet<TileTagComponent>().getKeys();
-    for (const auto& id : tileIds) {
-        const auto b = entityManager.getComponent<BoxColliderComponent>(id);
-        const auto t = entityManager.getComponent<TransformComponent>(id);
-
-        auto [ x, y ] = sCamera::worldToScreen({t->position.x, t->position.y}, *camera);
-        SDL_FRect tileBounds = {x, y, screenSize.x, screenSize.y};
-        SDL_RenderRect(renderer, &tileBounds);
-    }
 }
 
 void GameScene::renderEnemies(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint& screenSize) {
@@ -156,7 +182,7 @@ void GameScene::renderEnemies(SDL_Renderer *renderer, const CameraComponent *cam
 
     auto enemyIds = entityManager.getSparseSet<EnemyTagComponent>().getKeys();
     for (const auto& id : enemyIds) {
-        const auto b = entityManager.getComponent<BoxColliderComponent>(id);
+        // const auto b = entityManager.getComponent<BoxColliderComponent>(id);
         const auto t = entityManager.getComponent<TransformComponent>(id);
 
         auto [x, y] = sCamera::worldToScreen({t->position.x, t->position.y}, *camera);
@@ -176,4 +202,16 @@ void GameScene::renderPlayer(SDL_Renderer *renderer, const CameraComponent *came
     auto* rotation = entityManager.getComponent<RotatedComponent>(player);
 
     SDL_RenderTextureRotated(renderer, playerAnim.getTexture(), &playerSprite.m_textureRect, &playerBounds, 0.0, nullptr, rotation->flipMode);
+}
+
+void GameScene::renderCollisionBoxes(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize) {
+    auto tileIds = entityManager.getSparseSet<BoxColliderComponent>().getKeys();
+    for (const auto& id : tileIds) {
+        // const auto b = entityManager.getComponent<BoxColliderComponent>(id);
+        const auto t = entityManager.getComponent<TransformComponent>(id);
+
+        auto [ x, y ] = sCamera::worldToScreen({t->position.x, t->position.y}, *camera);
+        SDL_FRect tileBounds = {x, y, screenSize.x, screenSize.y};
+        SDL_RenderRect(renderer, &tileBounds);
+    }
 }

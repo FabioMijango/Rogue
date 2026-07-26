@@ -26,6 +26,9 @@ namespace bb {
     constexpr float PROB_TO_BACK_TO_START = 0.4f;
     constexpr float PROB_TO_SPAWN_ENEMY = 0.02f;
 
+    // Player config
+    constexpr float PLAYER_SPEED = 100.f;
+
     // Animations ID
     constexpr std::string ANIMID_PLAYER = "player";
 

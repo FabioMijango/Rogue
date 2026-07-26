@@ -13,7 +13,7 @@ class GameScene : public Scene {
     void renderTiles(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderEnemies(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderPlayer(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
-
+    void renderCollisionBoxes(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
 public:
     ~GameScene() noexcept override;
 
