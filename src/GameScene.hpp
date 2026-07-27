@@ -10,10 +10,16 @@ class GameScene : public Scene {
     Entity player = -1;
     Dungeon dungeon;
 
+    SDL_FPoint mousePosition = {0.f , 0.f};
+
+    std::vector<Entity> entitiesToDestroy = {};
+
     void renderTiles(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderEnemies(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderPlayer(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderCollisionBoxes(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
+
+    void destroyExpiredEntities(Uint64 now);
 public:
     ~GameScene() noexcept override;
 

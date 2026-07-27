@@ -14,3 +14,18 @@ struct RotatedComponent {
 struct HealthComponent {
     int health = -1;
 };
+
+struct AttackComponent {
+    bool isAttacking = false;
+
+    TimeComponent attackTimer = {0};
+};
+
+struct InheritanceComponent {
+    Entity parent = -1;
+};
+
+struct LifetimeComponent {
+    TimeComponent time = {0};
+    Uint64 lifetime = 0;
+};

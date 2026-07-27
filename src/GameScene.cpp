@@ -6,6 +6,8 @@
 #include "utils/DungeonGenerator.hpp"
 #include <algorithm>
 
+#include "utils/Utils.hpp"
+
 GameScene::~GameScene() = default;
 
 bool GameScene::init(void** screenData) {
@@ -19,6 +21,7 @@ bool GameScene::init(void** screenData) {
     registerAction(SDL_SCANCODE_D, "LEFT");
     registerAction(SDL_SCANCODE_W, "UP");
     registerAction(SDL_SCANCODE_S, "DOWN");
+    registerAction(SDL_BUTTON_LEFT, "LEFT_CLICK");
 
     player = entityManager.createEntity();
     entityManager.addComponent<TransformComponent>(player, SDL_FPoint{bb::ROOM_SIZE / 2.f, bb::ROOM_SIZE / 2.f}, SDL_FPoint{1.0f, 1.0f});
@@ -28,6 +31,8 @@ bool GameScene::init(void** screenData) {
     entityManager.addComponent<RotatedComponent>(player, SDL_FLIP_NONE);
     entityManager.addComponent<PlayerTagComponent>(player);
     entityManager.addComponent<HealthComponent>(player, 5);
+    entityManager.addComponent<AttackComponent>(player, true, SDL_GetTicks());
+    entityManager.addComponent<TimeComponent>(player, SDL_GetTicks());
 
     dungeon = DungeonGenerator().generate(entityManager);
 
@@ -35,12 +40,46 @@ bool GameScene::init(void** screenData) {
 }
 
 SDL_AppResult GameScene::update(float deltaTime) {
+    for (auto& entity : entitiesToDestroy) {
+        entityManager.destroyEntity(entity);
+    }
+    entitiesToDestroy.clear();
+
+    Uint64 now = SDL_GetTicks();
+
     auto* transformPlayer = entityManager.getComponent<TransformComponent>(player);
     auto* kinematicPlayer = entityManager.getComponent<KinematicComponent>(player);
+    auto* timerPlayer = entityManager.getComponent<TimeComponent>(player);
+    auto* attackPlayer = entityManager.getComponent<AttackComponent>(player);
     auto* camera = entityManager.getComponent<CameraComponent>(player);
 
-    transformPlayer->position.x += kinematicPlayer->velocity.x * deltaTime;
-    transformPlayer->position.y += kinematicPlayer->velocity.y * deltaTime;
+    auto movement = kinematicPlayer->velocity.x != 0.0f || kinematicPlayer->velocity.y != 0.0f;
+    if (now - timerPlayer->timestamp >= bb::MOVEMENT_TIMEOUT && movement) {
+        transformPlayer->position.x += kinematicPlayer->velocity.x;
+        transformPlayer->position.y += kinematicPlayer->velocity.y;
+
+        timerPlayer->timestamp = now;
+    }
+
+    if (attackPlayer->isAttacking && now - attackPlayer->attackTimer.timestamp >= bb::ATTACK_TIMEOUT) {
+
+        SDL_FPoint mousePosInWorld = sCamera::screenToWorld(mousePosition, *camera);
+
+        SDL_FPoint dir = { mousePosInWorld.x - transformPlayer->position.x, mousePosInWorld.y - transformPlayer->position.y };
+        auto dirNorm = utils::normalize(dir);
+        dirNorm.x *= utils::SQR_2 * bb::TILE_SIZE;
+        dirNorm.y *= utils::SQR_2 * bb::TILE_SIZE;
+        dirNorm.x += transformPlayer->position.x;
+        dirNorm.y += transformPlayer->position.y;
+
+        auto attackEntity = entityManager.createEntity();
+        entityManager.addComponent<InheritanceComponent>(attackEntity, player);
+        entityManager.addComponent<TransformComponent>(attackEntity, dirNorm, SDL_FPoint{1.0f, 1.0f});
+        entityManager.addComponent<BoxColliderComponent>(attackEntity, SDL_FPoint{bb::TILE_SIZE, bb::TILE_SIZE}, SDL_FPoint{0, 0});
+        entityManager.addComponent<LifetimeComponent>(attackEntity, now, bb::HITBOX_LIFETIME);
+
+        attackPlayer->attackTimer.timestamp = now;
+    }
 
     spatialGrid.populateMap();
     auto potencialCollisions = spatialGrid.getPotentialCollisions();
@@ -83,6 +122,8 @@ SDL_AppResult GameScene::update(float deltaTime) {
     camera->position.x = transformPlayer->position.x + bb::TILE_SIZE / 2.0f;
     camera->position.y = transformPlayer->position.y + bb::TILE_SIZE / 2.0f;
 
+    destroyExpiredEntities(now);
+
     return SDL_APP_CONTINUE;
 }
 
@@ -98,6 +139,8 @@ SDL_AppResult GameScene::eventHandler(const SDL_Event *event) {
 void GameScene::sDoAction(const Action &action) {
     auto* kinematic = entityManager.getComponent<KinematicComponent>(player);
     auto* rotation = entityManager.getComponent<RotatedComponent>(player);
+    auto* attack = entityManager.getComponent<AttackComponent>(player);
+
     if (action.state == Action::State::Pressed) {
         if (action.name == "RIGHT") {
             kinematic->velocity.x += -bb::PLAYER_SPEED;
@@ -115,6 +158,10 @@ void GameScene::sDoAction(const Action &action) {
         }
         if (action.name == "SPACE") {
             dungeon = DungeonGenerator().generate(entityManager);
+        }
+        if (action.name == "LEFT_CLICK") {
+            attack->isAttacking = true;
+            mousePosition = {action.x, action.y};
         }
     }
     else if (action.state == Action::State::Released) {
@@ -215,5 +262,21 @@ void GameScene::renderCollisionBoxes(SDL_Renderer *renderer, const CameraCompone
         auto [ x, y ] = sCamera::worldToScreen({t->position.x, t->position.y}, *camera);
         SDL_FRect tileBounds = {x, y, screenSize.x, screenSize.y};
         SDL_RenderRect(renderer, &tileBounds);
+    }
+}
+
+void GameScene::destroyExpiredEntities(Uint64 now) {
+    auto& lifetimeKeys = entityManager.getSparseSet<LifetimeComponent>().getKeys();
+    for (auto& entity : lifetimeKeys) {
+        auto* lifetimeComponent = entityManager.getComponent<LifetimeComponent>(entity);
+        if (now - lifetimeComponent->time.timestamp >= lifetimeComponent->lifetime) {
+            auto* inheritanceComponent = entityManager.getComponent<InheritanceComponent>(entity);
+            if (inheritanceComponent) {
+                auto* parentAttack = entityManager.getComponent<AttackComponent>(inheritanceComponent->parent);
+                parentAttack->isAttacking = false;
+                parentAttack->attackTimer.timestamp = now;
+            }
+            entitiesToDestroy.push_back(entity);
+        }
     }
 }
