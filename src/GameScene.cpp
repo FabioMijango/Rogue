@@ -27,6 +27,7 @@ bool GameScene::init(void** screenData) {
     entityManager.addComponent<KinematicComponent>(player, SDL_FPoint{ 0.0f, 0.0f }, SDL_FPoint{ 0.0f, 0.0f });
     entityManager.addComponent<RotatedComponent>(player, SDL_FLIP_NONE);
     entityManager.addComponent<PlayerTagComponent>(player);
+    entityManager.addComponent<HealthComponent>(player, 5);
 
     dungeon = DungeonGenerator().generate(entityManager);
 
@@ -142,7 +143,7 @@ void GameScene::sRender(SDL_Renderer *renderer) {
     auto* camera = entityManager.getComponent<CameraComponent>(player);
     const SDL_FPoint screenSize = { bb::TILE_SIZE * camera->zoom, bb::TILE_SIZE * camera->zoom };
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 12, 19, 23, 255);
     SDL_RenderClear(renderer);
 
     renderTiles(renderer, camera, screenSize);
@@ -205,6 +206,7 @@ void GameScene::renderPlayer(SDL_Renderer *renderer, const CameraComponent *came
 }
 
 void GameScene::renderCollisionBoxes(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize) {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     auto tileIds = entityManager.getSparseSet<BoxColliderComponent>().getKeys();
     for (const auto& id : tileIds) {
         // const auto b = entityManager.getComponent<BoxColliderComponent>(id);

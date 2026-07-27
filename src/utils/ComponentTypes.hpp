@@ -10,3 +10,7 @@ struct EnemyTagComponent{};
 struct RotatedComponent {
     SDL_FlipMode flipMode = SDL_FLIP_NONE;
 };
+
+struct HealthComponent {
+    int health = -1;
+};

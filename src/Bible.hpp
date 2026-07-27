@@ -19,7 +19,7 @@ namespace bb {
 
     // Dungeon creation config
     constexpr int NUMBER_OF_ROOMS = 5;
-    constexpr float ROOM_SIZE = 100.0f; // TODO: Change to a bigger value (Like 400-600), actual just for debugging
+    constexpr float ROOM_SIZE = 500.0f;
     constexpr uint32_t TILES_PER_ROOM = 10;
     constexpr float TILE_SIZE = ROOM_SIZE / TILES_PER_ROOM;
 
@@ -27,7 +27,11 @@ namespace bb {
     constexpr float PROB_TO_SPAWN_ENEMY = 0.02f;
 
     // Player config
-    constexpr float PLAYER_SPEED = 100.f;
+    constexpr float PLAYER_SPEED = TILE_SIZE;
+
+    constexpr Uint64 MOVEMENT_TIMEOUT = 500.f;
+    constexpr Uint64 ATTACK_TIMEOUT = 500.f;
+    constexpr Uint64 HITBOX_LIFETIME = 500.f;
 
     // Animations ID
     constexpr std::string ANIMID_PLAYER = "player";

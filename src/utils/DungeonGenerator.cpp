@@ -225,6 +225,8 @@ void DungeonGenerator::populateWithEnemies(EntityManager &entityManager) {
                 entityManager.addComponent<TransformComponent>(enemy, SDL_FPoint{cell.tileBounds.x, cell.tileBounds.y}, SDL_FPoint{1.0f, 1.0f});
                 entityManager.addComponent<BoxColliderComponent>(enemy, bb::TILE_SIZE, bb::TILE_SIZE, SDL_FPoint{0.0f, 0.0f});
                 entityManager.addComponent<EnemyTagComponent>(enemy);
+                entityManager.addComponent<HealthComponent>(enemy, 2);
+                entityManager.addComponent<RotatedComponent>(enemy, SDL_FLIP_NONE);
             }
         }
     }
