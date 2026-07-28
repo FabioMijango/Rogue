@@ -1,11 +1,10 @@
 #include "GameScene.hpp"
 
 #include "Bible.hpp"
+#include "FiniteStateMachineSystem.hpp"
 #include "utils/AssetsUtils.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/DungeonGenerator.hpp"
-#include <algorithm>
-
 #include "utils/Utils.hpp"
 
 GameScene::~GameScene() = default;
@@ -28,11 +27,10 @@ bool GameScene::init(void** screenData) {
     entityManager.addComponent<BoxColliderComponent>(player, SDL_FPoint{bb::TILE_SIZE, bb::TILE_SIZE}, SDL_FPoint{0, 0});
     entityManager.addComponent<CameraComponent>(player, SDL_FPoint{bb::TILE_SIZE / 2.f, bb::TILE_SIZE / 2.f}, 1.f, SDL_FPoint{static_cast<float>(bb::WIDTH), static_cast<float>(bb::HEIGHT)});
     entityManager.addComponent<KinematicComponent>(player, SDL_FPoint{ 0.0f, 0.0f }, SDL_FPoint{ 0.0f, 0.0f });
+    entityManager.addComponent<FiniteStateMachineComponent>(player, FSMComponent::State::IDLE, FSMComponent::State::INVALID, StateData{}, SDL_GetTicks());
     entityManager.addComponent<RotatedComponent>(player, SDL_FLIP_NONE);
     entityManager.addComponent<PlayerTagComponent>(player);
     entityManager.addComponent<HealthComponent>(player, 5);
-    entityManager.addComponent<AttackComponent>(player, true, SDL_GetTicks());
-    entityManager.addComponent<TimeComponent>(player, SDL_GetTicks());
 
     dungeon = DungeonGenerator().generate(entityManager);
 
@@ -47,39 +45,11 @@ SDL_AppResult GameScene::update(float deltaTime) {
 
     Uint64 now = SDL_GetTicks();
 
-    auto* transformPlayer = entityManager.getComponent<TransformComponent>(player);
-    auto* kinematicPlayer = entityManager.getComponent<KinematicComponent>(player);
-    auto* timerPlayer = entityManager.getComponent<TimeComponent>(player);
-    auto* attackPlayer = entityManager.getComponent<AttackComponent>(player);
-    auto* camera = entityManager.getComponent<CameraComponent>(player);
-
-    auto movement = kinematicPlayer->velocity.x != 0.0f || kinematicPlayer->velocity.y != 0.0f;
-    if (now - timerPlayer->timestamp >= bb::MOVEMENT_TIMEOUT && movement) {
-        transformPlayer->position.x += kinematicPlayer->velocity.x;
-        transformPlayer->position.y += kinematicPlayer->velocity.y;
-
-        timerPlayer->timestamp = now;
+    auto* fsmPlayer = entityManager.getComponent<FiniteStateMachineComponent>(player);
+    if (fsmPlayer->newState) {
+        sFSM::initState(fsmPlayer, entityManager, player, now);
     }
-
-    if (attackPlayer->isAttacking && now - attackPlayer->attackTimer.timestamp >= bb::ATTACK_TIMEOUT) {
-
-        SDL_FPoint mousePosInWorld = sCamera::screenToWorld(mousePosition, *camera);
-
-        SDL_FPoint dir = { mousePosInWorld.x - transformPlayer->position.x, mousePosInWorld.y - transformPlayer->position.y };
-        auto dirNorm = utils::normalize(dir);
-        dirNorm.x *= utils::SQR_2 * bb::TILE_SIZE;
-        dirNorm.y *= utils::SQR_2 * bb::TILE_SIZE;
-        dirNorm.x += transformPlayer->position.x;
-        dirNorm.y += transformPlayer->position.y;
-
-        auto attackEntity = entityManager.createEntity();
-        entityManager.addComponent<InheritanceComponent>(attackEntity, player);
-        entityManager.addComponent<TransformComponent>(attackEntity, dirNorm, SDL_FPoint{1.0f, 1.0f});
-        entityManager.addComponent<BoxColliderComponent>(attackEntity, SDL_FPoint{bb::TILE_SIZE, bb::TILE_SIZE}, SDL_FPoint{0, 0});
-        entityManager.addComponent<LifetimeComponent>(attackEntity, now, bb::HITBOX_LIFETIME);
-
-        attackPlayer->attackTimer.timestamp = now;
-    }
+    sFSM::updateState(fsmPlayer, entityManager, player, now);
 
     spatialGrid.populateMap();
     auto potencialCollisions = spatialGrid.getPotentialCollisions();
@@ -119,10 +89,12 @@ SDL_AppResult GameScene::update(float deltaTime) {
         }
     }
 
+    auto* transformPlayer = entityManager.getComponent<TransformComponent>(player);
+    auto* camera = entityManager.getComponent<CameraComponent>(player);
     camera->position.x = transformPlayer->position.x + bb::TILE_SIZE / 2.0f;
     camera->position.y = transformPlayer->position.y + bb::TILE_SIZE / 2.0f;
 
-    destroyExpiredEntities(now);
+    // destroyExpiredEntities(now);
 
     return SDL_APP_CONTINUE;
 }
@@ -137,54 +109,52 @@ SDL_AppResult GameScene::eventHandler(const SDL_Event *event) {
 }
 
 void GameScene::sDoAction(const Action &action) {
-    auto* kinematic = entityManager.getComponent<KinematicComponent>(player);
-    auto* rotation = entityManager.getComponent<RotatedComponent>(player);
-    auto* attack = entityManager.getComponent<AttackComponent>(player);
+    auto* fsmComponent = entityManager.getComponent<FiniteStateMachineComponent>(player);
+
+    FSMComponent::State newState = FSMComponent::State::INVALID;
 
     if (action.state == Action::State::Pressed) {
-        if (action.name == "RIGHT") {
-            kinematic->velocity.x += -bb::PLAYER_SPEED;
-            rotation->flipMode = SDL_FLIP_NONE;
         if (action.name == bb::Acts::RIGHT) {
+            newState = FSMComponent::State::WALK;
+            fsmComponent->stateData.walkStateData.right = true;
         }
-        if (action.name == "LEFT") {
-            kinematic->velocity.x += bb::PLAYER_SPEED;
-            rotation->flipMode = SDL_FLIP_HORIZONTAL;
         if (action.name == bb::Acts::LEFT) {
+            newState = FSMComponent::State::WALK;
+            fsmComponent->stateData.walkStateData.left = true;
         }
-        if (action.name == "UP") {
-            kinematic->velocity.y += -bb::PLAYER_SPEED;
         if (action.name == bb::Acts::UP) {
+            newState = FSMComponent::State::WALK;
+            fsmComponent->stateData.walkStateData.up = true;
         }
-        if (action.name == "DOWN") {
-            kinematic->velocity.y += bb::PLAYER_SPEED;
         if (action.name == bb::Acts::DOWN) {
+            newState = FSMComponent::State::WALK;
+            fsmComponent->stateData.walkStateData.down = true;
         }
         if (action.name == bb::Acts::SPACE) {
             dungeon = DungeonGenerator().generate(entityManager);
         }
-        if (action.name == "LEFT_CLICK") {
-            attack->isAttacking = true;
-            mousePosition = {action.x, action.y};
         if (action.name == bb::Acts::LEFT_CLICK) {
+            newState = FSMComponent::State::ATTACK;
+            auto* camera = entityManager.getComponent<CameraComponent>(player);
+            fsmComponent->stateData.attackStateData.targetPosition = sCamera::screenToWorld({action.x, action.y}, *camera);
         }
     }
     else if (action.state == Action::State::Released) {
-        if (action.name == "RIGHT") {
-            kinematic->velocity.x += bb::PLAYER_SPEED;
         if (action.name == bb::Acts::RIGHT) {
+            newState = FSMComponent::State::WALK;
+            fsmComponent->stateData.walkStateData.right = false;
         }
-        if (action.name == "LEFT") {
-            kinematic->velocity.x += -bb::PLAYER_SPEED;
         if (action.name == bb::Acts::LEFT) {
+            newState = FSMComponent::State::WALK;
+            fsmComponent->stateData.walkStateData.left = false;
         }
-        if (action.name == "UP") {
-            kinematic->velocity.y += bb::PLAYER_SPEED;
         if (action.name == bb::Acts::UP) {
+            newState = FSMComponent::State::WALK;
+            fsmComponent->stateData.walkStateData.up = false;
         }
-        if (action.name == "DOWN") {
-            kinematic->velocity.y += -bb::PLAYER_SPEED;
         if (action.name == bb::Acts::DOWN) {
+            newState = FSMComponent::State::WALK;
+            fsmComponent->stateData.walkStateData.down = false;
         }
     } else if (action.state == Action::State::Vertical_Scroll) {
         auto* camera = entityManager.getComponent<CameraComponent>(player);
@@ -192,6 +162,10 @@ void GameScene::sDoAction(const Action &action) {
         if (camera->zoom < 0.1f) {
             camera->zoom = 0.1f;
         }
+    }
+
+    if (newState != FSMComponent::State::INVALID) {
+        sFSM::changeState(fsmComponent, newState);
     }
 }
 
@@ -271,21 +245,5 @@ void GameScene::renderCollisionBoxes(SDL_Renderer *renderer, const CameraCompone
         auto [ x, y ] = sCamera::worldToScreen({t->position.x, t->position.y}, *camera);
         SDL_FRect tileBounds = {x, y, screenSize.x, screenSize.y};
         SDL_RenderRect(renderer, &tileBounds);
-    }
-}
-
-void GameScene::destroyExpiredEntities(Uint64 now) {
-    auto& lifetimeKeys = entityManager.getSparseSet<LifetimeComponent>().getKeys();
-    for (auto& entity : lifetimeKeys) {
-        auto* lifetimeComponent = entityManager.getComponent<LifetimeComponent>(entity);
-        if (now - lifetimeComponent->time.timestamp >= lifetimeComponent->lifetime) {
-            auto* inheritanceComponent = entityManager.getComponent<InheritanceComponent>(entity);
-            if (inheritanceComponent) {
-                auto* parentAttack = entityManager.getComponent<AttackComponent>(inheritanceComponent->parent);
-                parentAttack->isAttacking = false;
-                parentAttack->attackTimer.timestamp = now;
-            }
-            entitiesToDestroy.push_back(entity);
-        }
     }
 }
