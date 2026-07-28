@@ -15,13 +15,13 @@ bool GameScene::init(void** screenData) {
         return false;
     }
 
-    registerAction(SDL_SCANCODE_SPACE, "SPACE");
-    registerAction(ScrollType::Vertical, "ZOOM");
-    registerAction(SDL_SCANCODE_A, "RIGHT");
-    registerAction(SDL_SCANCODE_D, "LEFT");
-    registerAction(SDL_SCANCODE_W, "UP");
-    registerAction(SDL_SCANCODE_S, "DOWN");
-    registerAction(SDL_BUTTON_LEFT, "LEFT_CLICK");
+    registerAction(SDL_SCANCODE_SPACE, bb::Acts::UP);
+    registerAction(ScrollType::Vertical, bb::Acts::ZOOM);
+    registerAction(SDL_SCANCODE_A, bb::Acts::RIGHT);
+    registerAction(SDL_SCANCODE_D, bb::Acts::LEFT);
+    registerAction(SDL_SCANCODE_W, bb::Acts::UP);
+    registerAction(SDL_SCANCODE_S, bb::Acts::DOWN);
+    registerAction(SDL_BUTTON_LEFT, bb::Acts::LEFT_CLICK);
 
     player = entityManager.createEntity();
     entityManager.addComponent<TransformComponent>(player, SDL_FPoint{bb::ROOM_SIZE / 2.f, bb::ROOM_SIZE / 2.f}, SDL_FPoint{1.0f, 1.0f});
@@ -145,37 +145,46 @@ void GameScene::sDoAction(const Action &action) {
         if (action.name == "RIGHT") {
             kinematic->velocity.x += -bb::PLAYER_SPEED;
             rotation->flipMode = SDL_FLIP_NONE;
+        if (action.name == bb::Acts::RIGHT) {
         }
         if (action.name == "LEFT") {
             kinematic->velocity.x += bb::PLAYER_SPEED;
             rotation->flipMode = SDL_FLIP_HORIZONTAL;
+        if (action.name == bb::Acts::LEFT) {
         }
         if (action.name == "UP") {
             kinematic->velocity.y += -bb::PLAYER_SPEED;
+        if (action.name == bb::Acts::UP) {
         }
         if (action.name == "DOWN") {
             kinematic->velocity.y += bb::PLAYER_SPEED;
+        if (action.name == bb::Acts::DOWN) {
         }
-        if (action.name == "SPACE") {
+        if (action.name == bb::Acts::SPACE) {
             dungeon = DungeonGenerator().generate(entityManager);
         }
         if (action.name == "LEFT_CLICK") {
             attack->isAttacking = true;
             mousePosition = {action.x, action.y};
+        if (action.name == bb::Acts::LEFT_CLICK) {
         }
     }
     else if (action.state == Action::State::Released) {
         if (action.name == "RIGHT") {
             kinematic->velocity.x += bb::PLAYER_SPEED;
+        if (action.name == bb::Acts::RIGHT) {
         }
         if (action.name == "LEFT") {
             kinematic->velocity.x += -bb::PLAYER_SPEED;
+        if (action.name == bb::Acts::LEFT) {
         }
         if (action.name == "UP") {
             kinematic->velocity.y += bb::PLAYER_SPEED;
+        if (action.name == bb::Acts::UP) {
         }
         if (action.name == "DOWN") {
             kinematic->velocity.y += -bb::PLAYER_SPEED;
+        if (action.name == bb::Acts::DOWN) {
         }
     } else if (action.state == Action::State::Vertical_Scroll) {
         auto* camera = entityManager.getComponent<CameraComponent>(player);
@@ -225,7 +234,7 @@ void GameScene::renderTiles(SDL_Renderer *renderer, const CameraComponent *camer
 }
 
 void GameScene::renderEnemies(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint& screenSize) {
-    auto& enemyAnim = Assets::Instance().getAnimation(bb::ANIMID_ENEMY);
+    auto& enemyAnim = Assets::Instance().getAnimation(bb::Anim::ID_ENEMY);
     auto enemySprite = enemyAnim.getSprite();
 
     auto enemyIds = entityManager.getSparseSet<EnemyTagComponent>().getKeys();
@@ -240,7 +249,7 @@ void GameScene::renderEnemies(SDL_Renderer *renderer, const CameraComponent *cam
 }
 
 void GameScene::renderPlayer(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint& screenSize) {
-    auto& playerAnim = Assets::Instance().getAnimation(bb::ANIMID_PLAYER);
+    auto& playerAnim = Assets::Instance().getAnimation(bb::Anim::ID_PLAYER);
     auto playerSprite = playerAnim.getSprite();
 
     auto* transform = entityManager.getComponent<TransformComponent>(player);

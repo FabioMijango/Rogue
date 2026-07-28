@@ -98,8 +98,8 @@ void DungeonGenerator::populateRooms() {
 
 std::vector<CellTile> DungeonGenerator::populateRoomTiles(Position roomPos, const uint32_t roomsNum) const {
     auto& assets = Assets::Instance();
-    auto& floor = assets.getAnimation(bb::ANIMID_FLOOR);
-    auto& wall = assets.getAnimation(bb::ANIMID_SIDE_WALL);
+    auto& floor = assets.getAnimation(bb::Anim::ID_FLOOR);
+    auto& wall = assets.getAnimation(bb::Anim::ID_SIDE_WALL);
 
     std::vector<CellTile> roomTiles;
     roomTiles.reserve(bb::TILES_PER_ROOM * bb::TILES_PER_ROOM);
@@ -170,7 +170,7 @@ void DungeonGenerator::resolveRoomsConnections() {
 }
 
 void DungeonGenerator::createConnectionBetweenRoom(Direction dir, std::vector<CellTile> &roomTiles, bool sameRoom) {
-    auto& floor = Assets::Instance().getAnimation(bb::ANIMID_FLOOR);
+    auto& floor = Assets::Instance().getAnimation(bb::Anim::ID_FLOOR);
     const auto size = bb::TILES_PER_ROOM;
     int doorStart, doorEnd;
 

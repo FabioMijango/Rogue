@@ -34,16 +34,32 @@ namespace bb {
     constexpr Uint64 HITBOX_LIFETIME = 500.f;
 
     // Animations ID
-    constexpr std::string ANIMID_PLAYER = "player";
+    namespace Anim {
+        constexpr std::string ID_PLAYER = "player";
 
-    constexpr std::string ANIMID_ENEMY = "enemy";
+        constexpr std::string ID_ENEMY = "enemy";
 
-    constexpr std::string ANIMID_TOP_WALL = "topWall";
-    constexpr std::string ANIMID_SIDE_WALL = "sideWall";
+        constexpr std::string ID_TOP_WALL = "topWall";
+        constexpr std::string ID_SIDE_WALL = "sideWall";
 
-    constexpr std::string ANIMID_FLOOR = "floor";
+        constexpr std::string ID_FLOOR = "floor";
+    }
 
     // Tags ID
-    constexpr std::string TAG_PLAYER = "Player";
-    constexpr std::string TAG_WALL = "Wall";
+    namespace Tags {
+        constexpr std::string PLAYER = "Player";
+        constexpr std::string WALL = "Wall";
+    }
+
+    // Actions name
+    namespace Acts {
+        constexpr std::string UP = "UP";
+        constexpr std::string DOWN = "DOWN";
+        constexpr std::string LEFT = "LEFT";
+        constexpr std::string RIGHT = "RIGHT";
+
+        constexpr std::string ZOOM = "ZOOM";
+        constexpr std::string SPACE = "SPACE";
+        constexpr std::string LEFT_CLICK = "LEFT_CLICK";
+    }
 }
