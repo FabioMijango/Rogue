@@ -20,7 +20,6 @@ class GameScene : public Scene {
     // TODO: Add specific system for destroying entities
     // void destroyExpiredEntities(Uint64 now);
 public:
-    ~GameScene() noexcept override;
 
     bool init(void** screenData) override;
     void exit() override;

@@ -7,14 +7,12 @@
 #include "utils/DungeonGenerator.hpp"
 #include "utils/Utils.hpp"
 
-GameScene::~GameScene() = default;
-
 bool GameScene::init(void** screenData) {
     if (!AssetsUtils::loadAssets()) {
         return false;
     }
 
-    registerAction(SDL_SCANCODE_SPACE, bb::Acts::UP);
+    registerAction(SDL_SCANCODE_SPACE, bb::Acts::SPACE);
     registerAction(ScrollType::Vertical, bb::Acts::ZOOM);
     registerAction(SDL_SCANCODE_A, bb::Acts::RIGHT);
     registerAction(SDL_SCANCODE_D, bb::Acts::LEFT);
