@@ -7,3 +7,5 @@ out
 cmake-build*
 
 TODO.md
+.clang-format
+compile_commands.json
