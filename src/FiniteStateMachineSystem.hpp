@@ -1,5 +1,6 @@
 #pragma once
 #include "Bible.hpp"
+#include "SDL3/SDL_log.h"
 #include "utils/ComponentTypes.hpp"
 #include "utils/Utils.hpp"
 
@@ -42,6 +43,9 @@ inline void initState(FSMComponent* component, EntityManager& entityManager, Ent
     }
 
     case FSMComponent::State::ATTACK: {
+        if (now - component->stateInitialTime.timestamp < bb::ATTACK_TIMEOUT ) {
+                return;
+        }
         const auto& attackData = component->stateData.attackStateData;
 
         auto* transform = entityManager.getComponent<TransformComponent>(entity);
