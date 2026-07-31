@@ -1,4 +1,7 @@
 #pragma once
+#include <SDL3/SDL_surface.h>
+
+#include "SGEL.hpp"
 
 struct TileTagComponent {};
 

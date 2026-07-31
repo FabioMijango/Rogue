@@ -1,4 +1,5 @@
 #pragma once
+#include <SDL3/SDL_stdinc.h>
 #include <string>
 
 namespace bb {
@@ -20,7 +21,7 @@ namespace bb {
     // Dungeon creation config
     constexpr int NUMBER_OF_ROOMS = 5;
     constexpr float ROOM_SIZE = 500.0f;
-    constexpr uint32_t TILES_PER_ROOM = 10;
+    constexpr Uint32 TILES_PER_ROOM = 10;
     constexpr float TILE_SIZE = ROOM_SIZE / TILES_PER_ROOM;
 
     constexpr float PROB_TO_BACK_TO_START = 0.4f;

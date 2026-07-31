@@ -1,4 +1,5 @@
 #pragma once
+#include "Bible.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/Utils.hpp"
 
