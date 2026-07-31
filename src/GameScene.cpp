@@ -2,6 +2,7 @@
 
 #include "Bible.hpp"
 #include "FiniteStateMachineSystem.hpp"
+#include "SDL3/SDL_stdinc.h"
 #include "utils/AssetsUtils.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/DungeonGenerator.hpp"
@@ -92,7 +93,7 @@ SDL_AppResult GameScene::update(float deltaTime) {
     camera->position.x = transformPlayer->position.x + bb::TILE_SIZE / 2.0f;
     camera->position.y = transformPlayer->position.y + bb::TILE_SIZE / 2.0f;
 
-    // destroyExpiredEntities(now);
+    destroyExpiredEntities(now);
 
     return SDL_APP_CONTINUE;
 }
@@ -243,5 +244,17 @@ void GameScene::renderCollisionBoxes(SDL_Renderer *renderer, const CameraCompone
         auto [ x, y ] = sCamera::worldToScreen({t->position.x, t->position.y}, *camera);
         SDL_FRect tileBounds = {x, y, screenSize.x, screenSize.y};
         SDL_RenderRect(renderer, &tileBounds);
+    }
+}
+
+void GameScene::destroyExpiredEntities(Uint64 now) {
+    auto& lifetimeKeys = entityManager.getSparseSet<LifetimeComponent>().getKeys();
+
+    for (auto key : lifetimeKeys ) {
+        auto* lifetimeComponent = entityManager.getComponent<LifetimeComponent>(key);
+
+        if ( now - lifetimeComponent->time.timestamp >= lifetimeComponent->lifetime ) {
+            entitiesToDestroy.push_back(key);
+        }
     }
 }

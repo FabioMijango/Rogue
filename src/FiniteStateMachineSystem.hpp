@@ -1,6 +1,7 @@
 #pragma once
 #include "Bible.hpp"
 #include "SDL3/SDL_log.h"
+#include "Types.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/Utils.hpp"
 
@@ -61,7 +62,7 @@ inline void initState(FSMComponent* component, EntityManager& entityManager, Ent
         entityManager.addComponent<InheritanceComponent>(attackEntity, entity);
         entityManager.addComponent<TransformComponent>(attackEntity, dirNorm, SDL_FPoint{1.0f, 1.0f});
         entityManager.addComponent<BoxColliderComponent>(attackEntity, SDL_FPoint{bb::TILE_SIZE, bb::TILE_SIZE}, SDL_FPoint{0, 0});
-        entityManager.addComponent<LifetimeComponent>(attackEntity, now, bb::HITBOX_LIFETIME);
+        entityManager.addComponent<LifetimeComponent>(attackEntity, TimeComponent{ now }, bb::HITBOX_LIFETIME);
 
         break;
     }

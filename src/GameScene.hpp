@@ -1,4 +1,5 @@
 #pragma once
+#include "SDL3/SDL_stdinc.h"
 #include "SGEL.hpp"
 #include "SpatialGrid.hpp"
 #include "utils/DungeonGenerator.hpp"
@@ -17,8 +18,7 @@ class GameScene : public Scene {
     void renderPlayer(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderCollisionBoxes(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
 
-    // TODO: Add specific system for destroying entities
-    // void destroyExpiredEntities(Uint64 now);
+    void destroyExpiredEntities(Uint64 now);
 public:
 
     bool init(void** screenData) override;
