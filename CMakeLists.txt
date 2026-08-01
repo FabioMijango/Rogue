@@ -10,7 +10,7 @@ include(FetchContent)
 FetchContent_Declare(
         SGEL
         GIT_REPOSITORY https://github.com/FabioMijango/SGEL.git
-        GIT_TAG v1.2
+        GIT_TAG v1.3
         GIT_SHALLOW TRUE
         EXCLUDE_FROM_ALL
 )
