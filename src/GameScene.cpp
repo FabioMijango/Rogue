@@ -2,11 +2,13 @@
 
 #include "Bible.hpp"
 #include "FiniteStateMachineSystem.hpp"
+#include "PhysicsUtils.hpp"
 #include "SDL3/SDL_stdinc.h"
 #include "utils/AssetsUtils.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/DungeonGenerator.hpp"
 #include "utils/Utils.hpp"
+#include "utils/CollisionResolver.hpp"
 
 bool GameScene::init(void** screenData) {
     if (!AssetsUtils::loadAssets()) {
@@ -51,41 +53,22 @@ SDL_AppResult GameScene::update(float deltaTime) {
     sFSM::updateState(fsmPlayer, entityManager, player, now);
 
     spatialGrid.populateMap();
-    auto potencialCollisions = spatialGrid.getPotentialCollisions();
 
-    for (auto& [entityA, entityB] : potencialCollisions) {
+    auto collsPlayerTile = spatialGrid.getPotentialCollisionBetween<PlayerTagComponent, TileTagComponent>();
+
+    for ( auto& [ entityA, entityB ] : collsPlayerTile ) {
         auto* transformA = entityManager.getComponent<TransformComponent>(entityA);
+        auto* boxColliderA = entityManager.getComponent<BoxColliderComponent>(entityA);
         auto* transformB = entityManager.getComponent<TransformComponent>(entityB);
-        auto* colliderA = entityManager.getComponent<BoxColliderComponent>(entityA);
-        auto* colliderB = entityManager.getComponent<BoxColliderComponent>(entityB);
+        auto* boxColliderB = entityManager.getComponent<BoxColliderComponent>(entityB);
 
-        SDL_FRect rectA = sPhysics::getBoundingBox(*transformA, *colliderA);
-        SDL_FRect rectB = sPhysics::getBoundingBox(*transformB, *colliderB);
-        
-        if (sPhysics::checkAABBCollision(rectA, rectB)) {
-            auto* kinematicA = entityManager.getComponent<KinematicComponent>(entityA);
-            auto* kinematicB = entityManager.getComponent<KinematicComponent>(entityB);
+        auto boundingBoxA = sPhysics::getBoundingBox(*transformA, *boxColliderA);
+        auto boundingBoxB = sPhysics::getBoundingBox(*transformB, *boxColliderB);
 
-            float overlapX = std::min(rectA.x + rectA.w - rectB.x, rectB.x + rectB.w - rectA.x);
-            float overlapY = std::min(rectA.y + rectA.h - rectB.y, rectB.y + rectB.h - rectA.y);
-
-            bool resolveX = overlapX < overlapY;
-            float overlap = resolveX ? overlapX : overlapY;
-
-            float dir = resolveX ? ((rectA.x < rectB.x) ? -1.0f : 1.0f) 
-                                 : ((rectA.y < rectB.y) ? -1.0f : 1.0f);
-
-            float pushA = (kinematicA && kinematicB) ? (dir * overlap * 0.5f) : (kinematicA ? dir * overlap : 0.0f);
-            float pushB = (kinematicA && kinematicB) ? (-dir * overlap * 0.5f) : (kinematicB ? -dir * overlap : 0.0f);
-
-            if (resolveX) {
-                transformA->position.x += pushA;
-                transformB->position.x += pushB;
-            } else {
-                transformA->position.y += pushA;
-                transformB->position.y += pushB;
-            }
+        if ( sPhysics::checkAABBCollision(boundingBoxA, boundingBoxB)) {
+            sPhysics::resolverPlayerTileCollision(entityManager, entityA, entityB, boundingBoxA, boundingBoxB);
         }
+
     }
 
     auto* transformPlayer = entityManager.getComponent<TransformComponent>(player);
