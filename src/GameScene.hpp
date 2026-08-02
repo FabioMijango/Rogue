@@ -1,5 +1,6 @@
 #pragma once
-#include "SDL3/SDL_stdinc.h"
+#include <SDL3/SDL_stdinc.h>
+
 #include "SGEL.hpp"
 #include "SpatialGrid.hpp"
 #include "utils/DungeonGenerator.hpp"

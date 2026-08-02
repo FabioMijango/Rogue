@@ -4,6 +4,7 @@
 #include "Types.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/Utils.hpp"
+#include <vector>
 
 namespace sFSM {
 inline void changeState(FSMComponent* component, const FSMComponent::State newState) {
@@ -63,6 +64,8 @@ inline void initState(FSMComponent* component, EntityManager& entityManager, Ent
         entityManager.addComponent<TransformComponent>(attackEntity, dirNorm, SDL_FPoint{1.0f, 1.0f});
         entityManager.addComponent<BoxColliderComponent>(attackEntity, SDL_FPoint{bb::TILE_SIZE, bb::TILE_SIZE}, SDL_FPoint{0, 0});
         entityManager.addComponent<LifetimeComponent>(attackEntity, TimeComponent{ now }, bb::HITBOX_LIFETIME);
+        entityManager.addComponent<AttackHitboxTagComponent>(attackEntity);
+        entityManager.addComponent<EntitiesHittedComponent>(attackEntity, std::vector<Entity>{} );
 
         break;
     }

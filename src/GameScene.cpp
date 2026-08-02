@@ -1,13 +1,13 @@
 #include "GameScene.hpp"
 
+#include <SDL3/SDL_stdinc.h>
+
 #include "Bible.hpp"
 #include "FiniteStateMachineSystem.hpp"
 #include "PhysicsUtils.hpp"
-#include "SDL3/SDL_stdinc.h"
 #include "utils/AssetsUtils.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/DungeonGenerator.hpp"
-#include "utils/Utils.hpp"
 #include "utils/CollisionResolver.hpp"
 
 bool GameScene::init(void** screenData) {
@@ -55,7 +55,6 @@ SDL_AppResult GameScene::update(float deltaTime) {
     spatialGrid.populateMap();
 
     auto collsPlayerTile = spatialGrid.getPotentialCollisionBetween<PlayerTagComponent, TileTagComponent>();
-
     for ( auto& [ entityA, entityB ] : collsPlayerTile ) {
         auto* transformA = entityManager.getComponent<TransformComponent>(entityA);
         auto* boxColliderA = entityManager.getComponent<BoxColliderComponent>(entityA);
@@ -69,6 +68,11 @@ SDL_AppResult GameScene::update(float deltaTime) {
             sPhysics::resolverPlayerTileCollision(entityManager, entityA, entityB, boundingBoxA, boundingBoxB);
         }
 
+    }
+
+    auto collsAttackPlayerEnemy = spatialGrid.getPotentialCollisionBetween<AttackHitboxTagComponent, EnemyTagComponent>();
+    for ( auto& [ entityA, entityB ] : collsAttackPlayerEnemy ) {
+        sPhysics::resolverCollisionAttack(entityManager, entityA, entityB, now);
     }
 
     auto* transformPlayer = entityManager.getComponent<TransformComponent>(player);

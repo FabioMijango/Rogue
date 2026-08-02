@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL3/SDL_surface.h>
+#include <vector>
 
 #include "SGEL.hpp"
 
@@ -8,6 +9,8 @@ struct TileTagComponent {};
 struct PlayerTagComponent{};
 
 struct EnemyTagComponent{};
+
+struct AttackHitboxTagComponent{};
 
 struct RotatedComponent {
     SDL_FlipMode flipMode = SDL_FLIP_NONE;
@@ -59,3 +62,7 @@ struct FiniteStateMachineComponent {
     bool newState = false;
 };
 typedef FiniteStateMachineComponent FSMComponent;
+
+struct EntitiesHittedComponent {
+    std::vector<Entity> entitiesHitted = {};
+};

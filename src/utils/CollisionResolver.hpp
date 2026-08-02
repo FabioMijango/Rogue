@@ -1,9 +1,13 @@
 #pragma once
 
+#include <SDL3/SDL_stdinc.h>
+#include <SDL3/SDL_rect.h>
 
+#include "../Bible.hpp"
 #include "EntityManager.hpp"
-#include "SDL3/SDL_rect.h"
 #include "Types.hpp"
+#include "ComponentTypes.hpp"
+
 namespace sPhysics {
 
 // TODO: Implement more reliable collision resolution. This doesn't work correctly
@@ -31,6 +35,42 @@ inline void resolverPlayerTileCollision(EntityManager& entityManager, Entity ent
     } else {
         transformA->position.y += pushA;
         transformB->position.y += pushB;
+    }
+}
+
+inline void resolverCollisionAttack(EntityManager& entityManager, Entity entityA, Entity entityB, Uint64 now ) {
+    auto* transformA = entityManager.getComponent<TransformComponent>(entityA);
+    auto* transformB = entityManager.getComponent<TransformComponent>(entityB);
+    auto* BoxColliderA = entityManager.getComponent<BoxColliderComponent>(entityA);
+    auto* BoxColliderB = entityManager.getComponent<BoxColliderComponent>(entityB);
+
+    SDL_FRect boundingBoxA = sPhysics::getBoundingBox(*transformA, *BoxColliderA);
+    SDL_FRect boundingBoxB = sPhysics::getBoundingBox(*transformB, *BoxColliderB);
+    if (!sPhysics::checkAABBCollision(boundingBoxA, boundingBoxB)) {
+        return;
+    }
+
+    auto* hittedA = entityManager.getComponent<EntitiesHittedComponent>(entityA);
+    auto  hittedB = entityManager.getComponent<EntitiesHittedComponent>(entityB);
+
+    // TODO: Add logic with HealtComponent to check if the entity is alive before adding it to the hitted list
+    if(hittedA) {
+        for ( auto& entity : hittedA->entitiesHitted ) {
+            if (entity == entityB) {
+                return;
+            }
+        }
+        hittedA->entitiesHitted.push_back(entityB);
+        entityManager.addComponent<LifetimeComponent>(entityB, TimeComponent(now), bb::ATTACK_TIMEOUT );
+
+    } else if (hittedB) {
+        for ( auto& entity : hittedB->entitiesHitted ) {
+            if (entity == entityA) {
+                return;
+            }
+        }
+        hittedB->entitiesHitted.push_back(entityA);
+        entityManager.addComponent<LifetimeComponent>(entityA, TimeComponent(now), bb::ATTACK_TIMEOUT );
     }
 }
 }// namespace sPhysics
