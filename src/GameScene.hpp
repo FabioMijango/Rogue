@@ -1,13 +1,14 @@
 #pragma once
 #include <SDL3/SDL_stdinc.h>
 
+#include "Bible.hpp"
 #include "SGEL.hpp"
 #include "SpatialGrid.hpp"
 #include "utils/DungeonGenerator.hpp"
 
 class GameScene : public Scene {
     EntityManager entityManager;
-    SpatialGrid spatialGrid = {bb::ROOM_SIZE, &entityManager}; // TODO: Update SGEL Version, and remove SpatialGrid include
+    SpatialGrid spatialGrid = {bb::TILE_SIZE * 2.f, &entityManager}; // TODO: Update SGEL Version, and remove SpatialGrid include
 
     Entity player = -1;
     Dungeon dungeon;
