@@ -6,6 +6,8 @@
 
 struct TileTagComponent {};
 
+struct StairsTagComponent {};
+
 struct PlayerTagComponent{};
 
 struct EnemyTagComponent{};
@@ -65,4 +67,12 @@ typedef FiniteStateMachineComponent FSMComponent;
 
 struct EntitiesHittedComponent {
     std::vector<Entity> entitiesHitted = {};
+};
+
+struct EnemyIAComponent {
+    enum class EnemyType {
+        ORC
+    };
+
+    EnemyType enemyType;
 };

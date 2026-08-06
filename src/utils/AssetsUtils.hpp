@@ -1,4 +1,5 @@
 #pragma once
+#include "Animation.hpp"
 #include "Assets.hpp"
 #include "../Bible.hpp"
 
@@ -33,6 +34,10 @@ public:
 
         Animation* topWallAnim =  assets.loadAnimation(bb::Anim::ID_TOP_WALL, bb::tileRes.name, { 0 , 1 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
         if (!topWallAnim) return false;
+
+        // Stairs texture
+        Animation* stairsAnim = assets.loadAnimation(bb::Anim::ID_STAIRS, bb::tileRes.name, {  7 * bb::ASSETS_TILE_SIZE , 16 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
+        if(!stairsAnim) return false;
 
         return true;
     }

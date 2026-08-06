@@ -16,6 +16,7 @@ class GameScene : public Scene {
     std::vector<Entity> entitiesToDestroy = {};
 
     void renderTiles(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
+    void renderStair(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderEnemies(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderPlayer(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderCollisionBoxes(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);

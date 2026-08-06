@@ -2,9 +2,13 @@
 
 #include <SDL3/SDL_stdinc.h>
 
+#include "Assets.hpp"
 #include "Bible.hpp"
+#include "CameraUtils.hpp"
 #include "FiniteStateMachineSystem.hpp"
 #include "PhysicsUtils.hpp"
+#include "SDL3/SDL_rect.h"
+#include "SDL3/SDL_render.h"
 #include "utils/AssetsUtils.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/DungeonGenerator.hpp"
@@ -163,6 +167,7 @@ void GameScene::sRender(SDL_Renderer *renderer) {
     SDL_RenderClear(renderer);
 
     renderTiles(renderer, camera, screenSize);
+    renderStair(renderer, camera, screenSize);
     renderEnemies(renderer, camera, screenSize);
     renderPlayer(renderer, camera, screenSize);
 
@@ -190,6 +195,22 @@ void GameScene::renderTiles(SDL_Renderer *renderer, const CameraComponent *camer
 
             SDL_RenderTexture(renderer, anim->getTexture(), &sprite.m_textureRect, &tileBounds);
         }
+    }
+}
+
+void GameScene::renderStair(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint& screenSize) {
+    auto stairsKeys = entityManager.getSparseSet<StairsTagComponent>().getKeys();
+    for (auto key : stairsKeys ) {
+        auto* transform = entityManager.getComponent<TransformComponent>(key);
+        auto* boxCollider = entityManager.getComponent<BoxColliderComponent>(key);
+
+        auto& anim = Assets::Instance().getAnimation(bb::Anim::ID_STAIRS);
+        auto sprite = anim.getSprite();
+
+        SDL_FPoint screenPos = sCamera::worldToScreen( {transform->position.x, transform->position.y }, *camera);
+        SDL_FRect stairsBounds = {screenPos.x, screenPos.y, boxCollider->size.x * camera->zoom, boxCollider->size.y * camera->zoom};
+
+        SDL_RenderTexture(renderer, anim.getTexture(), &sprite.m_textureRect, &stairsBounds);
     }
 }
 

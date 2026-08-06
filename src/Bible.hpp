@@ -26,6 +26,7 @@ namespace bb {
 
     constexpr float PROB_TO_BACK_TO_START = 0.4f;
     constexpr float PROB_TO_SPAWN_ENEMY = 0.02f;
+    constexpr float PROB_TO_SPAWN_STAIRS = 0.05f;
 
     // Player config
     constexpr float PLAYER_SPEED = TILE_SIZE;
@@ -44,6 +45,8 @@ namespace bb {
         constexpr std::string ID_SIDE_WALL = "sideWall";
 
         constexpr std::string ID_FLOOR = "floor";
+
+        constexpr std::string ID_STAIRS = "stairs";
     }
 
     // Tags ID

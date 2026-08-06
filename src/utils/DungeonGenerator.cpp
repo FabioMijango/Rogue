@@ -1,8 +1,9 @@
 #include "DungeonGenerator.hpp"
 
-#include <iostream>
-
 #include "ComponentTypes.hpp"
+#include "EntityManager.hpp"
+#include "SDL3/SDL_rect.h"
+#include <ranges>
 
 DungeonGenerator::DungeonGenerator() {
     gen = std::mt19937(std::random_device{}());
@@ -232,6 +233,31 @@ void DungeonGenerator::populateWithEnemies(EntityManager &entityManager) {
     }
 }
 
+void DungeonGenerator::generateEscapeStairs(EntityManager& entityManager) {
+    CellTile selectedCell;
+    for (auto room : dungeon.m_rooms | std::views::values ) {
+        if ( room.id == 0 ) {
+            continue;
+        }
+        for (auto& cell : room.cells ) {
+            if ( cell.type == TileType::Wall ) {
+                continue;
+            }
+            if (diceDistribution(gen) < bb::PROB_TO_SPAWN_STAIRS) {
+                selectedCell = cell;
+                break;
+            }
+        }
+    }
+
+    auto tileBounds = selectedCell.tileBounds;
+
+    auto stairs = entityManager.createEntity();
+    entityManager.addComponent<TransformComponent>(stairs, SDL_FPoint{ tileBounds.x, tileBounds.y }, SDL_FPoint{ 1.f, 1.f });
+    entityManager.addComponent<BoxColliderComponent>(stairs, bb::TILE_SIZE, bb::TILE_SIZE, SDL_FPoint{ 0.f, 0.f });
+    entityManager.addComponent<StairsTagComponent>(stairs);
+}
+
 Dungeon DungeonGenerator::generate(EntityManager& entityManager) {
     prepare();
     generateRooms();
@@ -240,6 +266,7 @@ Dungeon DungeonGenerator::generate(EntityManager& entityManager) {
     resolveRoomsConnections();
     generateCollisions(entityManager);
     populateWithEnemies(entityManager);
+    generateEscapeStairs(entityManager);
 
     return dungeon;
 }
