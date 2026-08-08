@@ -53,6 +53,7 @@ struct FiniteStateMachineComponent {
         IDLE,
         WALK,
         ATTACK,
+        PATROL,
         INVALID,
     };
     State currentState = State::IDLE;

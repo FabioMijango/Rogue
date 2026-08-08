@@ -55,6 +55,8 @@ SDL_AppResult GameScene::update(float deltaTime) {
         sFSM::initState(fsmPlayer, entityManager, player, now);
     }
     sFSM::updateState(fsmPlayer, entityManager, player, now);
+    
+    sFSM::updateStateEnemies(entityManager, now);
 
     spatialGrid.populateMap();
 

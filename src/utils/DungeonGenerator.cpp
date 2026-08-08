@@ -3,6 +3,8 @@
 #include "ComponentTypes.hpp"
 #include "EntityManager.hpp"
 #include "SDL3/SDL_rect.h"
+#include "SDL3/SDL_timer.h"
+#include "Types.hpp"
 #include <ranges>
 
 DungeonGenerator::DungeonGenerator() {
@@ -224,10 +226,13 @@ void DungeonGenerator::populateWithEnemies(EntityManager &entityManager) {
             if (diceDistribution(gen) < bb::PROB_TO_SPAWN_ENEMY) {
                 auto enemy = entityManager.createEntity();
                 entityManager.addComponent<TransformComponent>(enemy, SDL_FPoint{cell.tileBounds.x, cell.tileBounds.y}, SDL_FPoint{1.0f, 1.0f});
+                entityManager.addComponent<KinematicComponent>(enemy, SDL_FPoint{0.0f, 0.0f}, SDL_FPoint{0.0f, 0.0f});
                 entityManager.addComponent<BoxColliderComponent>(enemy, bb::TILE_SIZE, bb::TILE_SIZE, SDL_FPoint{0.0f, 0.0f});
                 entityManager.addComponent<EnemyTagComponent>(enemy);
                 entityManager.addComponent<HealthComponent>(enemy, 2);
                 entityManager.addComponent<RotatedComponent>(enemy, SDL_FLIP_NONE);
+                entityManager.addComponent<FiniteStateMachineComponent>(enemy, FSMComponent::State::IDLE, FSMComponent::State::INVALID, StateData{}, SDL_GetTicks(), true );
+                entityManager.addComponent<EnemyIAComponent>(enemy, EnemyIAComponent::EnemyType::ORC );
             }
         }
     }

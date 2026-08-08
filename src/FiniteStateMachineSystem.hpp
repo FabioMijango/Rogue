@@ -1,9 +1,13 @@
 #pragma once
 #include "Bible.hpp"
+#include "EntityManager.hpp"
 #include "SDL3/SDL_log.h"
+#include "SDL3/SDL_rect.h"
+#include "SDL3/SDL_stdinc.h"
 #include "Types.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/Utils.hpp"
+#include <random>
 #include <vector>
 
 namespace sFSM {
@@ -70,6 +74,10 @@ inline void initState(FSMComponent* component, EntityManager& entityManager, Ent
         break;
     }
 
+    case FSMComponent::State::PATROL:
+        break;
+
+
     case FSMComponent::State::INVALID:
         break;
 
@@ -102,6 +110,9 @@ inline void updateState(FSMComponent* component, EntityManager& entityManager, E
             changeState(component, FSMComponent::State::IDLE);
         }
 
+        if (entityManager.getComponent<EnemyTagComponent>(entity) ) {
+            changeState(component, FSMComponent::State::IDLE);
+        }
         component->newState = false;
         component->stateInitialTime.timestamp = now;
         break;
@@ -120,9 +131,58 @@ inline void updateState(FSMComponent* component, EntityManager& entityManager, E
         break;
     }
 
+    case FSMComponent::State::PATROL:
+        break;
+
+
     case FSMComponent::State::INVALID:
         break;
 
     }
 }
+
+
+inline void setEnemyDirection(FSMComponent& fsmComponent, SDL_FPoint difference) {
+    auto& walkData = fsmComponent.stateData.walkStateData;
+    walkData = {false, false, false, false};
+    if (difference.x > 0 ) {
+        walkData.left = true;
+    } else if ( difference.x < 0 ) {
+        walkData.right = true;
+    }
+
+    if (difference.y > 0 ) {
+        walkData.down = true;
+    } else if ( difference.y < 0 ) {
+        walkData.up = true;
+    }
+}
+
+static std::mt19937 gen;
+static std::uniform_int_distribution<> dirDistribution;
+
+inline void updateStateEnemies(EntityManager& entityManager, const Uint64 now ) {
+    Entity playerKey = entityManager.getSparseSet<PlayerTagComponent>().getKeys().front();
+    auto playerPos = entityManager.getComponent<TransformComponent>(playerKey)->position;
+
+    auto& enemyKeys = entityManager.getSparseSet<EnemyTagComponent>().getKeys();
+    for (auto key : enemyKeys) {
+        auto enemyPos = entityManager.getComponent<TransformComponent>(key)->position;
+
+        auto* fsmComponent = entityManager.getComponent<FiniteStateMachineComponent>(key);
+        if (  now - fsmComponent->stateInitialTime.timestamp < bb::MOVEMENT_TIMEOUT * 1.5f ) {
+            continue;
+        }
+        auto difference = utils::difference( playerPos, enemyPos);
+        if ( utils::lenght(difference) < bb::ENEMY_DETECTION_RADIUS) {
+            setEnemyDirection(*fsmComponent, difference);
+            changeState(fsmComponent, FSMComponent::State::WALK);
+            initState(fsmComponent, entityManager, key, now);
+        }
+
+         updateState(fsmComponent, entityManager, key, now);
+    }
+}
+
+
 } // namespace sFSM

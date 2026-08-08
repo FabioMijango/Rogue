@@ -35,6 +35,9 @@ namespace bb {
     constexpr Uint64 ATTACK_TIMEOUT = 500.f;
     constexpr Uint64 HITBOX_LIFETIME = 500.f;
 
+    // Enemy config
+    constexpr float ENEMY_DETECTION_RADIUS = TILE_SIZE * 5.f;
+
     // Animations ID
     namespace Anim {
         constexpr std::string ID_PLAYER = "player";
