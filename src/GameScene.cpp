@@ -251,7 +251,9 @@ void GameScene::renderCollisionBoxes(SDL_Renderer *renderer, const CameraCompone
 
         auto [ x, y ] = sCamera::worldToScreen({t->position.x, t->position.y}, *camera);
         SDL_FRect tileBounds = {x, y, screenSize.x, screenSize.y};
+        const char* idChar = std::to_string(id).c_str();
         SDL_RenderRect(renderer, &tileBounds);
+        SDL_RenderDebugText(renderer, x + 1, y + 1, idChar);
     }
 }
 
