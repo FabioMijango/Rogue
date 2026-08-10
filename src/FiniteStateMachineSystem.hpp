@@ -7,7 +7,6 @@
 #include "Types.hpp"
 #include "utils/ComponentTypes.hpp"
 #include "utils/Utils.hpp"
-#include <random>
 #include <vector>
 
 namespace sFSM {
@@ -158,9 +157,6 @@ inline void setEnemyDirection(FSMComponent& fsmComponent, SDL_FPoint difference)
     }
 }
 
-static std::mt19937 gen;
-static std::uniform_int_distribution<> dirDistribution;
-
 inline void updateStateEnemies(EntityManager& entityManager, const Uint64 now ) {
     Entity playerKey = entityManager.getSparseSet<PlayerTagComponent>().getKeys().front();
     auto playerPos = entityManager.getComponent<TransformComponent>(playerKey)->position;
@@ -188,6 +184,4 @@ inline void updateStateEnemies(EntityManager& entityManager, const Uint64 now ) 
          updateState(fsmComponent, entityManager, key, now);
     }
 }
-
-
 } // namespace sFSM
