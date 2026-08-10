@@ -110,7 +110,7 @@ inline void updateState(FSMComponent* component, EntityManager& entityManager, E
             changeState(component, FSMComponent::State::IDLE);
         }
 
-        if (entityManager.getComponent<EnemyTagComponent>(entity) ) {
+        if (entityManager.hasComponent<EnemyTagComponent>(entity) ) {
             changeState(component, FSMComponent::State::IDLE);
         }
         component->newState = false;
@@ -174,7 +174,12 @@ inline void updateStateEnemies(EntityManager& entityManager, const Uint64 now ) 
             continue;
         }
         auto difference = utils::difference( playerPos, enemyPos);
-        if ( utils::lenght(difference) < bb::ENEMY_DETECTION_RADIUS) {
+        if ( utils::lenght(difference) < bb::TILE_SIZE * 2.f) {
+            fsmComponent->stateData.attackStateData.targetPosition = playerPos;
+            changeState(fsmComponent, FSMComponent::State::ATTACK);
+            initState(fsmComponent, entityManager, key, now);
+        }
+        else if ( utils::lenght(difference) < bb::ENEMY_DETECTION_RADIUS) {
             setEnemyDirection(*fsmComponent, difference);
             changeState(fsmComponent, FSMComponent::State::WALK);
             initState(fsmComponent, entityManager, key, now);
