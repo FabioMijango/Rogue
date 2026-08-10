@@ -128,7 +128,7 @@ void GameScene::sDoAction(const Action &action) {
         if (action.name == bb::Acts::LEFT_CLICK) {
             newState = FSMComponent::State::ATTACK;
             auto* camera = entityManager.getComponent<CameraComponent>(player);
-            fsmComponent->stateData.attackStateData.targetPosition = sCamera::screenToWorld({action.x, action.y}, *camera);
+            fsmComponent->stateData.attackStateData.targetPosition = sCamera::screenToWorld({action.x - bb::TILE_SIZE / 2.f, action.y - bb::TILE_SIZE / 2.f }, *camera);
         }
     }
     else if (action.state == Action::State::Released) {

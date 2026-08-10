@@ -1,7 +1,6 @@
 #pragma once
 #include "Bible.hpp"
 #include "EntityManager.hpp"
-#include "SDL3/SDL_log.h"
 #include "SDL3/SDL_rect.h"
 #include "SDL3/SDL_stdinc.h"
 #include "Types.hpp"
