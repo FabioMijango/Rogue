@@ -1,9 +1,10 @@
-#include "GameScene.hpp"
+#include "InitScene.hpp"
+#include "Bible.hpp"
 #include "SGEL.hpp"
 
 int main() {
     Engine& engine = Engine::Instance();
-    auto result = engine.init({bb::WIDTH, bb::HEIGHT}, 60, std::make_unique<GameScene>(), "Rogue");
+    auto result = engine.init({bb::WIDTH, bb::HEIGHT}, 60, std::make_unique<InitScene>(), "Rogue");
     if (result != SDL_APP_CONTINUE) {
         engine.sQuit();
         return -1;
