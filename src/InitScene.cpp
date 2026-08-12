@@ -49,5 +49,8 @@ void InitScene::exit() {
 }
 
 std::shared_ptr<Scene> InitScene::changeScene() {
-    return std::make_shared<GameScene>();
+    auto nextScene = std::make_shared<GameScene>();
+    nextScene->init(nullptr);
+
+    return nextScene;
 }
