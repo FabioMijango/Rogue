@@ -1,6 +1,7 @@
 #include "GameScene.hpp"
 
 #include <SDL3/SDL_stdinc.h>
+#include <memory>
 
 #include "Assets.hpp"
 #include "Bible.hpp"
@@ -13,6 +14,7 @@
 #include "utils/ComponentTypes.hpp"
 #include "utils/DungeonGenerator.hpp"
 #include "utils/CollisionResolver.hpp"
+#include "InitScene.hpp"
 
 bool GameScene::init(void** screenData) {
     if (!AssetsUtils::loadAssets()) {
@@ -43,6 +45,9 @@ bool GameScene::init(void** screenData) {
 }
 
 SDL_AppResult GameScene::update(float deltaTime) {
+    if (entityManager.getComponent<HealthComponent>(player)->health <= 0) {
+        m_hasEnded = true;
+    }
     for (auto& entity : entitiesToDestroy) {
         entityManager.destroyEntity(entity);
     }
@@ -78,6 +83,10 @@ SDL_AppResult GameScene::update(float deltaTime) {
 
     auto collsAttackPlayerEnemy = spatialGrid.getPotentialCollisionBetween<AttackHitboxTagComponent, EnemyTagComponent>();
     for ( auto& [ entityA, entityB ] : collsAttackPlayerEnemy ) {
+        sPhysics::resolverCollisionAttack(entityManager, entityA, entityB, now);
+    }
+    auto collsAttackEnemyPlayer = spatialGrid.getPotentialCollisionBetween<AttackHitboxTagComponent, PlayerTagComponent>();
+    for (auto& [ entityA, entityB ] : collsAttackEnemyPlayer) {
         sPhysics::resolverCollisionAttack(entityManager, entityA, entityB, now);
     }
 
@@ -182,7 +191,9 @@ void GameScene::exit() {
 }
 
 std::shared_ptr<Scene> GameScene::changeScene() {
-    return nullptr;
+    auto nextScene = std::make_shared<InitScene>();
+    nextScene->init(nullptr);
+    return nextScene;
 }
 
 void GameScene::renderTiles(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint& screenSize) {

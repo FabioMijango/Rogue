@@ -53,7 +53,6 @@ inline void resolverCollisionAttack(EntityManager& entityManager, Entity entityA
     auto* hittedA = entityManager.getComponent<EntitiesHittedComponent>(entityA);
     auto  hittedB = entityManager.getComponent<EntitiesHittedComponent>(entityB);
 
-    // TODO: Add logic with HealtComponent to check if the entity is alive before adding it to the hitted list
     if(hittedA) {
         for ( auto& entity : hittedA->entitiesHitted ) {
             if (entity == entityB) {
@@ -61,7 +60,14 @@ inline void resolverCollisionAttack(EntityManager& entityManager, Entity entityA
             }
         }
         hittedA->entitiesHitted.push_back(entityB);
-        entityManager.addComponent<LifetimeComponent>(entityB, TimeComponent(now), bb::ATTACK_TIMEOUT );
+        auto* healtComp = entityManager.getComponent<HealthComponent>(entityB);
+        if (healtComp->health > 0 ) {
+            healtComp->health--;
+        } else {
+            if (!entityManager.hasComponent<LifetimeComponent>(entityB)) {
+                entityManager.addComponent<LifetimeComponent>(entityB, TimeComponent(now), bb::ATTACK_TIMEOUT );
+            }
+        }
 
     } else if (hittedB) {
         for ( auto& entity : hittedB->entitiesHitted ) {
@@ -70,7 +76,14 @@ inline void resolverCollisionAttack(EntityManager& entityManager, Entity entityA
             }
         }
         hittedB->entitiesHitted.push_back(entityA);
-        entityManager.addComponent<LifetimeComponent>(entityA, TimeComponent(now), bb::ATTACK_TIMEOUT );
+        auto* healtComp = entityManager.getComponent<HealthComponent>(entityA);
+        if (healtComp->health > 0 ) {
+            healtComp->health--;
+        } else {
+            if (!entityManager.hasComponent<LifetimeComponent>(entityA)) {
+                entityManager.addComponent<LifetimeComponent>(entityA, TimeComponent(now), bb::ATTACK_TIMEOUT );
+            }
+        }
     }
 }
 }// namespace sPhysics

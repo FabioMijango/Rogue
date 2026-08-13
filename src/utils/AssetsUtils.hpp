@@ -7,6 +7,8 @@ class AssetsUtils {
     AssetsUtils() = default;
 public:
     static bool loadAssets() {
+        static bool loaded = false;
+        if (loaded) return true;
         Assets& assets = Assets::Instance();
 
         const SDL_Texture *roguesTex = assets.loadTexture(bb::rogueRes.name, bb::rogueRes.path, false);
@@ -39,6 +41,7 @@ public:
         Animation* stairsAnim = assets.loadAnimation(bb::Anim::ID_STAIRS, bb::tileRes.name, {  7 * bb::ASSETS_TILE_SIZE , 16 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
         if(!stairsAnim) return false;
 
+        loaded = true;
         return true;
     }
 };
