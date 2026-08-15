@@ -27,6 +27,7 @@ class GameScene : public Scene {
     void renderEnemies(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderPlayer(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
     void renderCollisionBoxes(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
+    void renderUI(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize);
 
     void destroyExpiredEntities(Uint64 now);
 public:

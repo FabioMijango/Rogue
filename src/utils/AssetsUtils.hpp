@@ -11,6 +11,7 @@ public:
         if (loaded) return true;
         Assets& assets = Assets::Instance();
 
+        // Textures
         const SDL_Texture *roguesTex = assets.loadTexture(bb::rogueRes.name, bb::rogueRes.path, false);
         if (!roguesTex) return false;
 
@@ -20,6 +21,9 @@ public:
         const SDL_Texture *tileTex = assets.loadTexture(bb::tileRes.name, bb::tileRes.path, false);
         if (!tileTex) return false;
 
+        const SDL_Texture *heartTex = assets.loadTexture( bb::heartRes.name, bb::heartRes.path, false);
+
+        // Animations
         Animation* playerAnim =  assets.loadAnimation(bb::Anim::ID_PLAYER, bb::rogueRes.name,{ 0, 0, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
         if (!playerAnim) return false;
 
@@ -37,9 +41,11 @@ public:
         Animation* topWallAnim =  assets.loadAnimation(bb::Anim::ID_TOP_WALL, bb::tileRes.name, { 0 , 1 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
         if (!topWallAnim) return false;
 
-        // Stairs texture
         Animation* stairsAnim = assets.loadAnimation(bb::Anim::ID_STAIRS, bb::tileRes.name, {  7 * bb::ASSETS_TILE_SIZE , 16 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
         if(!stairsAnim) return false;
+
+        Animation* heartAnim = assets.loadAnimation(bb::Anim::ID_HEART, bb::heartRes.name, {0,0,  12 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE}, 12, 5);
+        if(!heartAnim) return false;
 
         loaded = true;
         return true;

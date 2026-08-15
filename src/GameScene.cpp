@@ -198,6 +198,7 @@ void GameScene::sRender(SDL_Renderer *renderer) {
     renderStair(renderer, camera, screenSize);
     renderEnemies(renderer, camera, screenSize);
     renderPlayer(renderer, camera, screenSize);
+    renderUI(renderer, camera, screenSize);
 
     renderCollisionBoxes(renderer, camera, screenSize);
 
@@ -275,6 +276,18 @@ void GameScene::renderPlayer(SDL_Renderer *renderer, const CameraComponent *came
     auto* rotation = entityManager.getComponent<RotatedComponent>(player);
 
     SDL_RenderTextureRotated(renderer, playerAnim.getTexture(), &playerSprite.m_textureRect, &playerBounds, 0.0, nullptr, rotation->flipMode);
+}
+
+void GameScene::renderUI(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint& screenSize) {
+    auto* health = entityManager.getComponent<HealthComponent>(player);
+
+    auto& anim = Assets::Instance().getAnimation(bb::heartRes.name);
+    auto sprite = anim.getSprite();
+
+    for (Uint32 i = 0; i < health->health; i++) {
+        const SDL_FRect heartBound = { i * bb::ASSETS_TILE_SIZE, 10, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE };
+        SDL_RenderTexture(renderer, anim.getTexture(), &sprite.m_textureRect, &heartBound);
+    }
 }
 
 void GameScene::renderCollisionBoxes(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint &screenSize) {
