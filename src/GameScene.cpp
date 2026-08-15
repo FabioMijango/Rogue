@@ -46,6 +46,7 @@ bool GameScene::init(void** screenData) {
 
 SDL_AppResult GameScene::update(float deltaTime) {
     if (entityManager.getComponent<HealthComponent>(player)->health <= 0) {
+        nextSceneType = NextScene::InitScene;
         m_hasEnded = true;
     }
     for (auto& entity : entitiesToDestroy) {
@@ -64,6 +65,22 @@ SDL_AppResult GameScene::update(float deltaTime) {
     sFSM::updateStateEnemies(entityManager, now);
 
     spatialGrid.populateMap();
+
+    auto collPlayerStair = spatialGrid.getPotentialCollisionBetween<PlayerTagComponent, StairsTagComponent>();
+    for (auto& [entityA, entityB] : collPlayerStair) {
+        auto* transformA = entityManager.getComponent<TransformComponent>(entityA);
+        auto* boxColliderA = entityManager.getComponent<BoxColliderComponent>(entityA);
+        auto* transformB = entityManager.getComponent<TransformComponent>(entityB);
+        auto* boxColliderB = entityManager.getComponent<BoxColliderComponent>(entityB);
+
+        auto boundingBoxA = sPhysics::getBoundingBox(*transformA, *boxColliderA);
+        auto boundingBoxB = sPhysics::getBoundingBox(*transformB, *boxColliderB);
+
+        if (sPhysics::checkAABBCollision(boundingBoxA, boundingBoxB)) {
+            nextSceneType = NextScene::NextLevel;
+            m_hasEnded = true;
+        }
+    }
 
     auto collsPlayerTile = spatialGrid.getPotentialCollisionBetween<PlayerTagComponent, TileTagComponent>();
     for ( auto& [ entityA, entityB ] : collsPlayerTile ) {
@@ -191,7 +208,12 @@ void GameScene::exit() {
 }
 
 std::shared_ptr<Scene> GameScene::changeScene() {
-    auto nextScene = std::make_shared<InitScene>();
+    std::shared_ptr<Scene> nextScene = nullptr;
+    if (nextSceneType == NextScene::NextLevel) {
+        nextScene = std::make_shared<GameScene>();
+    } else if (nextSceneType == NextScene::InitScene) {
+        nextScene = std::make_shared<InitScene>();
+    }
     nextScene->init(nullptr);
     return nextScene;
 }

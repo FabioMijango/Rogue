@@ -6,9 +6,16 @@
 #include "SpatialGrid.hpp"
 #include "utils/DungeonGenerator.hpp"
 
+enum class NextScene {
+    NextLevel,
+    InitScene,
+    None
+};
+
 class GameScene : public Scene {
     EntityManager entityManager;
     SpatialGrid spatialGrid = {bb::TILE_SIZE * 2.f, &entityManager}; // TODO: Update SGEL Version, and remove SpatialGrid include
+    NextScene nextSceneType = NextScene::None;
 
     Entity player = -1;
     Dungeon dungeon;
