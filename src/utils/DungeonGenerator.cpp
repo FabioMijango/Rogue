@@ -4,7 +4,6 @@
 #include "EntityManager.hpp"
 #include "SDL3/SDL_rect.h"
 #include "SDL3/SDL_timer.h"
-#include "SpatialGrid.hpp"
 #include "Types.hpp"
 #include <ranges>
 #include <set>
