@@ -38,7 +38,7 @@ public:
         Animation* sideWallAnim =  assets.loadAnimation(bb::Anim::ID_SIDE_WALL, bb::tileRes.name, { 0 , 0, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
         if (!sideWallAnim) return false;
 
-        Animation* topWallAnim =  assets.loadAnimation(bb::Anim::ID_TOP_WALL, bb::tileRes.name, { 0 , 1 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
+        Animation* topWallAnim =  assets.loadAnimation(bb::Anim::ID_TOP_WALL, bb::tileRes.name, { 1 * bb::ASSETS_TILE_SIZE , 0, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
         if (!topWallAnim) return false;
 
         Animation* stairsAnim = assets.loadAnimation(bb::Anim::ID_STAIRS, bb::tileRes.name, {  7 * bb::ASSETS_TILE_SIZE , 16 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });

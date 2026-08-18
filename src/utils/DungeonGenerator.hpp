@@ -5,6 +5,7 @@
 #include <ranges>
 #include <unordered_map>
 
+#include "EntityManager.hpp"
 #include "SGEL.hpp"
 #include "../Bible.hpp"
 
@@ -124,6 +125,7 @@ class DungeonGenerator {
     void generateEscapeStairs(EntityManager& entityManager);
 
     std::vector<CellTile> populateRoomTiles(Position roomPos, uint32_t roomsNum) const;
+    void fixTilesSprite();
     void createConnectionBetweenRoom(Direction dir, std::vector<CellTile>& roomTiles, bool sameRoom);
 public:
     DungeonGenerator();

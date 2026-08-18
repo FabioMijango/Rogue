@@ -4,8 +4,12 @@
 #include "EntityManager.hpp"
 #include "SDL3/SDL_rect.h"
 #include "SDL3/SDL_timer.h"
+#include "SpatialGrid.hpp"
 #include "Types.hpp"
 #include <ranges>
+#include <set>
+#include <unordered_map>
+#include <vector>
 
 DungeonGenerator::DungeonGenerator() {
     gen = std::mt19937(std::random_device{}());
@@ -97,6 +101,7 @@ void DungeonGenerator::populateRooms() {
         Room newRoom = {roomNum,{pos}, roomBounds, roomTiles};
         dungeon.m_rooms.emplace(i++, newRoom);
     }
+    fixTilesSprite();
 }
 
 std::vector<CellTile> DungeonGenerator::populateRoomTiles(Position roomPos, const uint32_t roomsNum) const {
@@ -132,6 +137,72 @@ std::vector<CellTile> DungeonGenerator::populateRoomTiles(Position roomPos, cons
     }
     return roomTiles;
 }
+
+void DungeonGenerator::fixTilesSprite() {
+    auto& assets = Assets::Instance();
+    auto& wallSide = assets.getAnimation(bb::Anim::ID_SIDE_WALL);
+    auto& wallTop = assets.getAnimation(bb::Anim::ID_TOP_WALL);
+    
+    std::set<uint32_t> roomBelow = {};
+    std::set<uint32_t> roomRight = {};
+    std::set<uint32_t> roomLeft = {};
+    auto& dunRooms = dungeon.m_rooms;
+    for (auto& [ id, room] : dunRooms ) {
+        auto roomBelowIt = m_rooms.find(Position{room.position.x, room.position.y + 1});
+        if ( roomBelowIt != m_rooms.end()) {
+            roomBelow.insert(id);
+        }
+
+        auto roomRightIt = m_rooms.find(Position{room.position.x + 1, room.position.y});
+        if (roomRightIt != m_rooms.end() && room.id == roomRightIt->second) {
+            roomRight.insert(id);
+        }
+
+        auto roomLeftIt = m_rooms.find(Position{room.position.x - 1, room.position.y});
+        if (roomLeftIt != m_rooms.end() && room.id == roomLeftIt->second) {
+            roomLeft.insert(id);
+        }
+    }
+
+
+    for (auto& [id, room] : dunRooms) {
+        auto& cells = room.cells;
+        for (int i = 0; i < bb::TILES_PER_ROOM; i++) {
+            for (int j = 0; j < bb::TILES_PER_ROOM; j++) {
+                auto& cell = cells[i * bb::TILES_PER_ROOM + j];
+                if (cell.type != TileType::Wall) {
+                    continue;
+                }
+
+                // Top
+                if ( j == 0 && i != 0 && i != bb::TILES_PER_ROOM - 1) {
+                    cell.animation = &wallTop;
+                }
+
+                if (i == bb::TILES_PER_ROOM - 1 && j == 0 && !roomRight.contains(id)) {
+                    if (cells[(j+1) * bb::TILES_PER_ROOM + i].type == TileType::Wall) {
+                        continue;
+                    }
+                    cell.animation = &wallTop;
+                }
+
+
+                if (i == 0 && j == 0 && !roomLeft.contains(id)) {
+                    if (cells[(i+1) * bb::TILES_PER_ROOM + j].type == TileType::Wall) {
+                        continue;
+                    }
+                    cell.animation = &wallTop;
+                }
+                if ( j == bb::TILES_PER_ROOM - 1  && !roomBelow.contains(id)) {
+                    cell.animation = &wallTop;
+                }
+
+            }
+        }
+    }
+}
+
+
 
 void DungeonGenerator::resolveRoomsConnections() {
     std::vector<Direction> dirs = {Direction::LEFT, Direction::RIGHT, Direction::UP, Direction::DOWN};
