@@ -22,6 +22,11 @@ public:
         if (!tileTex) return false;
 
         const SDL_Texture *heartTex = assets.loadTexture( bb::heartRes.name, bb::heartRes.path, false);
+        if (!heartTex) return false;
+
+        const SDL_Texture *hitText = assets.loadTexture(bb::hitRes.name, bb::hitRes.path, false);
+        if (!hitText) return false;
+
 
         // Animations
         Animation* playerAnim =  assets.loadAnimation(bb::Anim::ID_PLAYER, bb::rogueRes.name,{ 0, 0, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE });
@@ -46,6 +51,9 @@ public:
 
         Animation* heartAnim = assets.loadAnimation(bb::Anim::ID_HEART, bb::heartRes.name, {0,0,  12 * bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE}, 12, 5);
         if(!heartAnim) return false;
+
+        Animation* hitAnim =  assets.loadAnimation(bb::Anim::ID_HIT, bb::hitRes.name, {0,0, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE});
+        if (!hitAnim) return false;
 
         loaded = true;
         return true;

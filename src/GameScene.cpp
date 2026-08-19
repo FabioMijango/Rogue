@@ -198,6 +198,7 @@ void GameScene::sRender(SDL_Renderer *renderer) {
     renderStair(renderer, camera, screenSize);
     renderEnemies(renderer, camera, screenSize);
     renderPlayer(renderer, camera, screenSize);
+    renderHitsEntities(renderer, camera, screenSize);
     renderUI(renderer, camera, screenSize);
 
     renderCollisionBoxes(renderer, camera, screenSize);
@@ -276,6 +277,23 @@ void GameScene::renderPlayer(SDL_Renderer *renderer, const CameraComponent *came
     auto* rotation = entityManager.getComponent<RotatedComponent>(player);
 
     SDL_RenderTextureRotated(renderer, playerAnim.getTexture(), &playerSprite.m_textureRect, &playerBounds, 0.0, nullptr, rotation->flipMode);
+}
+
+void GameScene::renderHitsEntities(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint& screenSize) {
+    auto& assets = Assets::Instance();
+    auto& hitAnim = assets.getAnimation(bb::Anim::ID_HIT);
+    auto sprite = hitAnim.getSprite();
+
+    auto hitEntities = entityManager.getSparseSet<AttackHitboxTagComponent>().getKeys();
+    for (auto entity : hitEntities ) {
+        auto* transform = entityManager.getComponent<TransformComponent>(entity);
+        auto* collider = entityManager.getComponent<BoxColliderComponent>(entity);
+        
+        auto [ x, y ] =  sCamera::worldToScreen({transform->position.x, transform->position.y}, *camera);
+        SDL_FRect bounds = { x, y, screenSize.x, screenSize.y };
+
+        SDL_RenderTexture(renderer, hitAnim.getTexture(), &sprite.m_textureRect, &bounds);
+    }
 }
 
 void GameScene::renderUI(SDL_Renderer *renderer, const CameraComponent *camera, const SDL_FPoint& screenSize) {

@@ -11,6 +11,7 @@ namespace bb {
     const Resource monsterRes = {"monsters", "./res/images/monsters.png"};
     const Resource tileRes = {"tiles", "./res/images/tiles.png"};
     const Resource heartRes = {"heart", "./res/images/heart.png"};
+    const Resource hitRes = {"hit", "./res/images/hit.png"};
 
     // Window config
     constexpr int WIDTH = 1920;
@@ -53,6 +54,8 @@ namespace bb {
         constexpr std::string ID_STAIRS = "stairs";
 
         constexpr std::string ID_HEART = "heart";
+
+        constexpr std::string ID_HIT = "hit";
     }
 
     // Tags ID
