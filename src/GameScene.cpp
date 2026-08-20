@@ -201,7 +201,7 @@ void GameScene::sRender(SDL_Renderer *renderer) {
     renderHitsEntities(renderer, camera, screenSize);
     renderUI(renderer, camera, screenSize);
 
-    renderCollisionBoxes(renderer, camera, screenSize);
+    // renderCollisionBoxes(renderer, camera, screenSize);
 
     SDL_RenderPresent(renderer);
 }
