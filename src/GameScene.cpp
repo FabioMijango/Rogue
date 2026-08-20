@@ -22,7 +22,7 @@ bool GameScene::init(void** screenData) {
     }
 
     // registerAction(SDL_SCANCODE_SPACE, bb::Acts::SPACE);
-    registerAction(ScrollType::Vertical, bb::Acts::ZOOM);
+    // registerAction(ScrollType::Vertical, bb::Acts::ZOOM);
     registerAction(SDL_SCANCODE_A, bb::Acts::RIGHT);
     registerAction(SDL_SCANCODE_D, bb::Acts::LEFT);
     registerAction(SDL_SCANCODE_W, bb::Acts::UP);
@@ -176,13 +176,16 @@ void GameScene::sDoAction(const Action &action) {
             newState = FSMComponent::State::WALK;
             fsmComponent->stateData.walkStateData.down = false;
         }
-    } else if (action.state == Action::State::Vertical_Scroll) {
+    }
+    /*
+    else if (action.state == Action::State::Vertical_Scroll) {
         auto* camera = entityManager.getComponent<CameraComponent>(player);
         camera->zoom += action.y * 0.1f;
         if (camera->zoom < 0.1f) {
             camera->zoom = 0.1f;
         }
     }
+    */
 
     if (newState != FSMComponent::State::INVALID) {
         sFSM::changeState(fsmComponent, newState);
