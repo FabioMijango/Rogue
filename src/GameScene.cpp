@@ -21,7 +21,7 @@ bool GameScene::init(void** screenData) {
         return false;
     }
 
-    registerAction(SDL_SCANCODE_SPACE, bb::Acts::SPACE);
+    // registerAction(SDL_SCANCODE_SPACE, bb::Acts::SPACE);
     registerAction(ScrollType::Vertical, bb::Acts::ZOOM);
     registerAction(SDL_SCANCODE_A, bb::Acts::RIGHT);
     registerAction(SDL_SCANCODE_D, bb::Acts::LEFT);
@@ -148,9 +148,11 @@ void GameScene::sDoAction(const Action &action) {
             newState = FSMComponent::State::WALK;
             fsmComponent->stateData.walkStateData.down = true;
         }
+        /*
         if (action.name == bb::Acts::SPACE) {
             dungeon = DungeonGenerator().generate(entityManager);
         }
+        */
         if (action.name == bb::Acts::LEFT_CLICK) {
             newState = FSMComponent::State::ATTACK;
             auto* camera = entityManager.getComponent<CameraComponent>(player);
