@@ -15,4 +15,6 @@ bash ./run.sh
 ```
 
 # Video demo
-[![Watch the video](res/images/Rogue_Screenshot)](https://raw.githubusercontent.com/FabioMijango/Rogue/refs/heads/main/res/video/demo.mp4)
+https://github.com/user-attachments/assets/55c1ff71-8e83-4286-b3be-e49b37b3f3f0
+
+See also in [here](/res/video/demo.mp4)
