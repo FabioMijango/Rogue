@@ -16,3 +16,4 @@ bash ./run.sh
 
 # Video demo
 ![Rogue video demo](./res/video/demo.mp4)
+[![Watch the video](https://github.com/FabioMijango/Rogue/raw/refs/heads/main/res/video/demo.mp4)](res/images/Rogue_Screenshot.png)
