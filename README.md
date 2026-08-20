@@ -15,5 +15,4 @@ bash ./run.sh
 ```
 
 # Video demo
-![Rogue video demo](./res/video/demo.mp4)
-[![Watch the video](https://github.com/FabioMijango/Rogue/raw/refs/heads/main/res/video/demo.mp4)](res/images/Rogue_Screenshot.png)
+[![Watch the video](res/images/Rogue_Screenshot)](https://raw.githubusercontent.com/FabioMijango/Rogue/refs/heads/main/res/video/demo.mp4)
