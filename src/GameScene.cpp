@@ -303,7 +303,7 @@ void GameScene::renderUI(SDL_Renderer *renderer, const CameraComponent *camera, 
     auto sprite = anim.getSprite();
 
     for (Uint32 i = 0; i < health->health; i++) {
-        const SDL_FRect heartBound = { i * bb::ASSETS_TILE_SIZE, 10, bb::ASSETS_TILE_SIZE, bb::ASSETS_TILE_SIZE };
+        const SDL_FRect heartBound = { i * bb::ASSETS_TILE_SIZE * 2.f, 10, bb::ASSETS_TILE_SIZE * 2.f, bb::ASSETS_TILE_SIZE * 2.f };
         SDL_RenderTexture(renderer, anim.getTexture(), &sprite.m_textureRect, &heartBound);
     }
 }
